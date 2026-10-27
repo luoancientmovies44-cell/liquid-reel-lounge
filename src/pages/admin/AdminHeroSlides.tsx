@@ -1,5 +1,5 @@
 import { MediaUploadField } from "@/components/admin/MediaUploadField";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,20 +8,16 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { UploadAwareDialogContent } from "@/components/admin/UploadAwareDialogContent";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, Pencil, Trash2, Upload, Loader2 } from "lucide-react";
+import { Plus, Pencil, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { getHeroImages, type HeroImage } from "@/lib/firebase-db";
 import { createHeroImage, updateHeroImage, deleteHeroImage } from "@/lib/admin-db";
-import { storage } from "@/lib/firebase";
-import { ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
 
 export default function AdminHeroSlides() {
   const [heroImages, setHeroImages] = useState<HeroImage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingHero, setEditingHero] = useState<HeroImage | null>(null);
-  const [uploading, setUploading] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
   const [formData, setFormData] = useState({
@@ -60,26 +56,6 @@ export default function AdminHeroSlides() {
       linkUrl: hero.linkUrl || "",
     });
     setDialogOpen(true);
-  };
-
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setUploading(true);
-    try {
-      const fileName = `hero-slides/${Date.now()}_${file.name}`;
-      const fileRef = storageRef(storage, fileName);
-      await uploadBytes(fileRef, file);
-      const downloadUrl = await getDownloadURL(fileRef);
-      setFormData((prev) => ({ ...prev, imageUrl: downloadUrl }));
-      toast({ title: "Image uploaded successfully!" });
-    } catch (error) {
-      console.error("Upload error:", error);
-      toast({ title: "Failed to upload image", variant: "destructive" });
-    } finally {
-      setUploading(false);
-    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -174,30 +150,8 @@ export default function AdminHeroSlides() {
               </div>
 
               <div className="space-y-2">
-                <Label>Image</Label>
-                <div className="flex gap-2">
-                  <MediaUploadField id="imageUrl" value={formData.imageUrl} onChange={(url) => setFormData((prev) => ({ ...prev, imageUrl: url }))} scope={`AdminHeroSlides/${editingHero?.id || "new"}/imageUrl`} folder="heroslides/imageUrl" accept="image/*" required />
-                </div>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleFileUpload}
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="w-full"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={uploading}
-                >
-                  {uploading ? (
-                    <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Uploading...</>
-                  ) : (
-                    <><Upload className="w-4 h-4 mr-2" />Upload Image</>
-                  )}
-                </Button>
+                <Label htmlFor="imageUrl">Image URL</Label>
+                <MediaUploadField id="imageUrl" value={formData.imageUrl} onChange={(url) => setFormData((prev) => ({ ...prev, imageUrl: url }))} required />
                 {formData.imageUrl && (
                   <img src={formData.imageUrl} alt="Preview" className="w-full h-32 object-cover rounded mt-2" />
                 )}
@@ -218,7 +172,7 @@ export default function AdminHeroSlides() {
                 <Button type="button" variant="outline" onClick={() => { setDialogOpen(false); resetForm(); }}>
                   Cancel
                 </Button>
-                <Button type="submit" disabled={uploading}>
+                <Button type="submit">
                   {editingHero ? "Update" : "Create"}
                 </Button>
               </div>
@@ -269,7 +223,7 @@ export default function AdminHeroSlides() {
                         <Button variant="ghost" size="icon" onClick={() => handleEdit(hero)}>
                           <Pencil className="w-4 h-4" />
                         </Button>
-                        <Button variant="ghost" size="icon" className="text-destructive" onClick={() => handleDelete(hero.id!)}>
+                        <Button variant="ghost" size="icon" className="text-destructive" onClick={() => { if (hero.id) void handleDelete(hero.id); }}>
                           <Trash2 className="w-4 h-4" />
                         </Button>
                       </div>
