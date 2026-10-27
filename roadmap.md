@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Remove direct file uploads from all admin forms; retain URL/Drive link inputs only.
+- [x] Remove direct file uploads from all admin forms; retain URL/Drive link inputs only. Shared fields and separate Hero Slides upload removed; build passed and 11 existing regression tests passed. Signed-in save/read-back remains unverified without a Firebase admin session.
 
 - [x] Start directly uploaded video downloads without a dialog; browser attachment fixture, streaming tests and desktop/mobile Drive regression checks passed.
 - [ ] Verify a real uploaded video through a signed-in subscriber's Download button (blocked: no Firebase subscriber session available).
@@ -8,7 +8,7 @@
 - [x] Add secure R2 file upload option to every admin media field without changing existing links.
 - [x] Implement multipart retry/resume, mobile progress, speed and status; retry/resume tests passed.
 - [x] Play directly uploaded videos with Mux while preserving Google Drive playback and subscription checks; browser playback verified with WebM on mobile/desktop.
-- [x] Cancel R2 upload connection setup; admin forms are being changed to link-only at the user's request.
+- [x] Cancel R2 upload connection setup; admin forms now use links only at the user's request.
 - [ ] Verify H.264 MP4 playback on an equipped browser (blocked: sandbox Chromium rejected the H.264 test codec; WebM playback passed).
 
 - [x] Restore and verify the original embedded download navigation restrictions without reloading the frame; desktop/mobile regression checks passed.
