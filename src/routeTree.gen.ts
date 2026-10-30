@@ -15,6 +15,7 @@ import { Route as ApiPublicDriveCheckRouteImport } from './routes/api/public/dri
 import { Route as ApiPublicMediaDownloadRouteImport } from './routes/api/public/media-download'
 import { Route as ApiPublicPesapalRouteImport } from './routes/api/public/pesapal'
 import { Route as ApiPublicSendSmsRouteImport } from './routes/api/public/send-sms'
+import { Route as ApiPublicVideoDownloadRouteImport } from './routes/api/public/video-download'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -46,6 +47,11 @@ const ApiPublicSendSmsRoute = ApiPublicSendSmsRouteImport.update({
   path: '/api/public/send-sms',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicVideoDownloadRoute = ApiPublicVideoDownloadRouteImport.update({
+  id: '/api/public/video-download',
+  path: '/api/public/video-download',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -54,6 +60,7 @@ export interface FileRoutesByFullPath {
   '/api/public/media-download': typeof ApiPublicMediaDownloadRoute
   '/api/public/pesapal': typeof ApiPublicPesapalRoute
   '/api/public/send-sms': typeof ApiPublicSendSmsRoute
+  '/api/public/video-download': typeof ApiPublicVideoDownloadRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,6 +69,7 @@ export interface FileRoutesByTo {
   '/api/public/media-download': typeof ApiPublicMediaDownloadRoute
   '/api/public/pesapal': typeof ApiPublicPesapalRoute
   '/api/public/send-sms': typeof ApiPublicSendSmsRoute
+  '/api/public/video-download': typeof ApiPublicVideoDownloadRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -71,6 +79,7 @@ export interface FileRoutesById {
   '/api/public/media-download': typeof ApiPublicMediaDownloadRoute
   '/api/public/pesapal': typeof ApiPublicPesapalRoute
   '/api/public/send-sms': typeof ApiPublicSendSmsRoute
+  '/api/public/video-download': typeof ApiPublicVideoDownloadRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -81,6 +90,7 @@ export interface FileRouteTypes {
     | '/api/public/media-download'
     | '/api/public/pesapal'
     | '/api/public/send-sms'
+    | '/api/public/video-download'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -89,6 +99,7 @@ export interface FileRouteTypes {
     | '/api/public/media-download'
     | '/api/public/pesapal'
     | '/api/public/send-sms'
+    | '/api/public/video-download'
   id:
     | '__root__'
     | '/'
@@ -97,6 +108,7 @@ export interface FileRouteTypes {
     | '/api/public/media-download'
     | '/api/public/pesapal'
     | '/api/public/send-sms'
+    | '/api/public/video-download'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -106,6 +118,7 @@ export interface RootRouteChildren {
   ApiPublicMediaDownloadRoute: typeof ApiPublicMediaDownloadRoute
   ApiPublicPesapalRoute: typeof ApiPublicPesapalRoute
   ApiPublicSendSmsRoute: typeof ApiPublicSendSmsRoute
+  ApiPublicVideoDownloadRoute: typeof ApiPublicVideoDownloadRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -152,6 +165,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicSendSmsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/video-download': {
+      id: '/api/public/video-download'
+      path: '/api/public/video-download'
+      fullPath: '/api/public/video-download'
+      preLoaderRoute: typeof ApiPublicVideoDownloadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -162,6 +182,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicMediaDownloadRoute: ApiPublicMediaDownloadRoute,
   ApiPublicPesapalRoute: ApiPublicPesapalRoute,
   ApiPublicSendSmsRoute: ApiPublicSendSmsRoute,
+  ApiPublicVideoDownloadRoute: ApiPublicVideoDownloadRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

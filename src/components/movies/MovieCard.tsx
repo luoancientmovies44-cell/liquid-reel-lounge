@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Star, Play, Shield, Download } from "lucide-react";
+import { Play, Download, Loader2 } from "lucide-react";
 import padlockImage from "@/assets/padlock-subscribe.png";
 import {
   ContextMenu,
@@ -16,6 +16,12 @@ import { useSubscription } from "@/hooks/useSubscription";
 import { AuthModal } from "@/components/auth/AuthModal";
 import { SubscriptionModal } from "@/components/subscription/SubscriptionModal";
 import { useActivityTracker } from "@/hooks/useActivityTracker";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { DownloadProgress, type DownloadState } from "./DownloadProgress";
+import { prepareMediaDownload, launchMediaDownload } from "@/lib/media-download";
+import { tryConsumeDownload } from "@/lib/download-limit";
+import { getEpisodesBySeriesId, type Episode } from "@/lib/firebase-db";
 
 interface MovieCardProps {
   movie: Movie | Series | ContentItem;
@@ -34,11 +40,16 @@ export function MovieCard({ movie, contentType, forceAgentBorder, agentPageMode 
 
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { hasActiveSubscription, hasAgentPlan } = useSubscription();
+  const { hasActiveSubscription, hasAgentPlan, subscription } = useSubscription();
   const { track } = useActivityTracker();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
   const [showAgentModal, setShowAgentModal] = useState(false);
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [downloadState, setDownloadState] = useState<DownloadState>(null);
+  const [episodes, setEpisodes] = useState<Episode[]>([]);
+  const [selectedEpisodeId, setSelectedEpisodeId] = useState("");
+  const [episodeLoading, setEpisodeLoading] = useState(false);
 
   // Determine if it's a series
   const type = contentType || ('type' in movie ? movie.type : ('seasons' in movie ? 'series' : 'movie'));
@@ -79,57 +90,50 @@ export function MovieCard({ movie, contentType, forceAgentBorder, agentPageMode 
   // Agent page: locked for logged-out users and non-agent subscribers
   const isLocked = agentPageMode ? (!user || !hasAgentPlan) : false;
 
-  const handleClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    
-    track("Click", `Clicked on "${movie.title}" (${type})`);
-    
-    // Agent page: always require agent subscription
-    if (agentPageMode) {
-      if (!user) {
-        track("View", `Auth modal shown for "${movie.title}"`);
-        setShowAuthModal(true);
-        return;
-      }
-      if (!hasAgentPlan) {
-        track("View", `Agent subscription modal shown for "${movie.title}"`);
-        setShowAgentModal(true);
-        return;
-      }
-      track("Play", `Started watching "${movie.title}"`);
-      navigate(watchUrl);
-      return;
+  const checkAccess = () => {
+    if (!user) { setShowAuthModal(true); return false; }
+    const selected = episodes.find(ep => ep.id === selectedEpisodeId);
+    if ((agentPageMode || isAgent || selected?.isAgent) && !hasAgentPlan) { setShowAgentModal(true); return false; }
+    if (!hasActiveSubscription && !hasAgentPlan) { setShowSubscriptionModal(true); return false; }
+    return true;
+  };
+  const openDetail = async () => {
+    track("Click", `Selected "${movie.title}" (${type})`);
+    setDetailOpen(true);
+    if (isSeries && movie.id) {
+      setEpisodeLoading(true);
+      try {
+        const data = await getEpisodesBySeriesId(movie.id);
+        data.sort((a,b) => a.seasonNumber - b.seasonNumber || a.episodeNumber - b.episodeNumber);
+        setEpisodes(data);
+        const selected = data.find(ep => ep.seasonNumber === episodeInfo?.seasonNumber && ep.episodeNumber === episodeInfo?.episodeNumber) || data[0];
+        setSelectedEpisodeId(selected?.id || "");
+      } catch { toast({ title: "Episodes could not load", variant: "destructive" }); }
+      finally { setEpisodeLoading(false); }
     }
-    
-    // For series, allow access to series page
-    if (isSeries) {
-      navigate(watchUrl);
-      return;
-    }
-    
-    
-    // For movies, check auth and subscription
-    if (!user) {
-      track("View", `Auth modal shown for "${movie.title}"`);
-      setShowAuthModal(true);
-      return;
-    }
-    
-    // Agent movies require agent plan
-    if (isAgent && !hasAgentPlan) {
-      track("View", `Agent subscription modal shown for "${movie.title}"`);
-      setShowAgentModal(true);
-      return;
-    }
-    
-    if (!isAgent && !hasActiveSubscription && !hasAgentPlan) {
-      track("View", `Subscription modal shown for "${movie.title}"`);
-      setShowSubscriptionModal(true);
-      return;
-    }
-    
+  };
+  const watch = () => {
+    if (!checkAccess()) return;
     track("Play", `Started watching "${movie.title}"`);
-    navigate(watchUrl);
+    const selected = episodes.find(ep => ep.id === selectedEpisodeId);
+    navigate(isSeries && selected ? `/watch/series/${movie.id}?season=${selected.seasonNumber}&episode=${selected.episodeNumber}#video-player` : watchUrl);
+  };
+  const download = async () => {
+    if (downloadState || !checkAccess() || !user || !movie.id) return;
+    if (isComedyItem) { watch(); return; }
+    const selection = { kind: isSeries ? "series" as const : "movie" as const, id: movie.id, ...(isSeries ? { episodeId: selectedEpisodeId } : {}) };
+    setDownloadState("preparing");
+    try {
+      await prepareMediaDownload(selection);
+      const result = await tryConsumeDownload(user.id, subscription?.plan);
+      if (!result.allowed) throw new Error("You have reached your download limit for today.");
+      launchMediaDownload(selection, message => { setDownloadState(null); toast({ title: "Download failed", description: message, variant: "destructive" }); });
+      setDownloadState("started");
+      track("Download", `Download initiated for "${movie.title}"`);
+    } catch (error) {
+      setDownloadState(null);
+      toast({ title: "Download unavailable", description: error instanceof Error ? error.message : "Please try again.", variant: "destructive" });
+    }
   };
 
   const handleDownloadPoster = async (e: Event) => {
@@ -162,102 +166,12 @@ export function MovieCard({ movie, contentType, forceAgentBorder, agentPageMode 
   };
 
   const cardContent = (
-          <div
-            onClick={handleClick}
-            className="group block rounded-lg overflow-hidden transition-transform hover:scale-105 cursor-pointer"
-          >
-            <div className={`relative aspect-[2/3] overflow-hidden rounded-lg ${(isAgent || forceAgentBorder) ? 'agent-rainbow-border' : ''}`}>
-              {/* Locked overlay (agent page) */}
-              {isLocked && (
-                <div className="absolute inset-0 z-20 bg-black/30 flex flex-col items-center justify-center gap-2">
-                  <img
-                    src={padlockImage}
-                    alt="Subscribe now"
-                    className="w-16 h-20 md:w-20 md:h-24 object-contain drop-shadow-lg"
-                    loading="lazy"
-                  />
-                </div>
-              )}
-              <img
-                src={posterUrl}
-                alt={movie.title}
-                className="w-full h-full object-cover transition-transform group-hover:scale-110"
-                onError={(e) => {
-                  e.currentTarget.src = '/placeholder.svg';
-                }}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-
-              {/* Luo Badge */}
-              {(movie as any).isLuoChampion ? (
-                <div className="absolute top-2 left-2 bg-pink-600 text-white text-[8px] md:text-[10px] font-bold px-1.5 md:px-2 py-0.5 rounded-full z-10">
-                  Luo Champion
-                </div>
-              ) : (
-                <div className="absolute top-2 left-2 bg-blue-600 text-white text-[8px] md:text-[10px] font-bold px-1.5 md:px-2 py-0.5 rounded-full z-10">
-                  Luo
-                </div>
-              )}
-
-              {/* Agent Badge */}
-              {isAgent && (
-                <div className="absolute top-2 right-2 bg-orange-500 text-white text-[8px] md:text-[10px] font-bold px-1.5 md:px-2 py-0.5 rounded-full flex items-center gap-1 z-10">
-                  <Shield className="w-2.5 h-2.5 md:w-3 md:h-3" />
-                  AGENT
-                </div>
-              )}
-
-              {/* NEW Badge for series with agent episodes */}
-              {hasAgentEpisode && (
-                <div className="absolute top-2 right-2 bg-green-500 text-white text-[8px] md:text-[10px] font-bold px-1.5 md:px-2 py-0.5 rounded-full z-10 animate-pulse">
-                  NEW
-                </div>
-              )}
-
-              {/* Play Button on Hover */}
-              <div className="absolute inset-0 hidden md:flex flex-row items-center justify-center gap-2 md:flex-col md:gap-0 opacity-0 md:group-hover:opacity-100 transition-opacity duration-150">
-                <div
-                  className="w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center shadow-lg transform scale-90 group-hover:scale-100 transition-transform duration-150"
-                  style={{ background: "linear-gradient(135deg, #1cb7ff 1.22%, #2ff58b 50.24%)" }}
-                >
-                  <Play className="w-5 h-5 md:w-6 md:h-6 text-white fill-white ml-0.5" />
-                </div>
-                <span className="text-white text-[10px] md:text-xs font-medium md:mt-2 drop-shadow-lg">Play Now</span>
-              </div>
-
-              <div className="absolute bottom-0 left-0 right-0 p-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <div className="flex items-center gap-1">
-                  <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
-                  <span className="text-[10px] md:text-xs font-medium">{movie.rating}</span>
-                </div>
-              </div>
-              {/* Episode Badge (S2 E3) */}
-              {episodeInfo && (
-                <div className="absolute bottom-2 left-2 flex gap-1 z-10">
-                  <span className="bg-primary text-primary-foreground text-[8px] md:text-[10px] font-bold px-1 md:px-1.5 py-0.5 rounded">
-                    {episodeInfo.seasonLabel || `S${episodeInfo.seasonNumber}`}
-                  </span>
-                  <span className="bg-accent text-accent-foreground text-[8px] md:text-[10px] font-bold px-1 md:px-1.5 py-0.5 rounded">
-                    E{episodeInfo.episodeNumber}
-                  </span>
-                </div>
-              )}
-              {/* VJ Badge */}
-              {vjName && (
-                <div className={`absolute ${(isAgent || hasAgentEpisode) ? 'top-9' : 'top-2'} right-2 bg-purple-600 text-white text-[8px] md:text-[10px] font-bold px-1.5 md:px-2 py-0.5 rounded-full z-10`}>
-                  {vjName}
-                </div>
-              )}
-            </div>
-            <div className="mt-2">
-              <h3 className="text-xs md:text-sm font-medium truncate group-hover:text-primary transition-colors">
-                {episodeInfo ? episodeInfo.episodeTitle : movie.title}
-              </h3>
-              <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5">
-                {episodeInfo ? `${movie.title} • ${episodeInfo.seasonLabel || `S${episodeInfo.seasonNumber}`}E${episodeInfo.episodeNumber}` : `${year} • Trending`}
-              </p>
-            </div>
-          </div>
+    <Button variant="ghost" className="movie-holder hover:bg-transparent" onClick={openDetail} aria-label={`Open ${movie.title}`}>
+      <div className="w-full">
+        <img src={posterUrl} alt={movie.title} loading="lazy" className="movie-poster" onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = "/placeholder.svg"; }} />
+        <h3 className="movie-name">{episodeInfo ? episodeInfo.episodeTitle : movie.title}</h3>
+      </div>
+    </Button>
   );
 
   return (
@@ -278,6 +192,26 @@ export function MovieCard({ movie, contentType, forceAgentBorder, agentPageMode 
 
 
 
+      <Dialog open={detailOpen} onOpenChange={setDetailOpen}>
+        <DialogContent className="max-w-md p-4">
+          <div className="flex gap-4 pr-8">
+            <img src={posterUrl} alt={movie.title} className="movie-poster w-28 shrink-0 self-start" />
+            <DialogTitle className="pt-2 text-lg leading-snug break-words">{movie.title}</DialogTitle>
+          </div>
+          <DialogDescription className="sr-only">Watch or download {movie.title}</DialogDescription>
+          {isSeries && <div className="space-y-2">
+            <label htmlFor={`episode-${movie.id}`} className="text-xs text-muted-foreground">Episode</label>
+            <select id={`episode-${movie.id}`} value={selectedEpisodeId} onChange={e => setSelectedEpisodeId(e.target.value)} className="glass w-full rounded-2xl p-3 text-sm" disabled={episodeLoading}>
+              {episodeLoading ? <option>Loading episodes…</option> : !episodes.length ? <option>No episodes available</option> : episodes.map(ep => <option key={ep.id} value={ep.id}>S{ep.seasonNumber} E{ep.episodeNumber} · {ep.title}</option>)}
+            </select>
+          </div>}
+          <div className="mt-1 grid grid-cols-2 gap-3">
+            <Button variant="outline" className="h-12" onClick={watch}><Play />Watch</Button>
+            <Button className="h-12" onClick={download} disabled={!!downloadState || (isSeries && (episodeLoading || !selectedEpisodeId))}><Download />Download</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+      <DownloadProgress state={downloadState} title={movie.title} onClose={() => setDownloadState(null)} />
       <AuthModal open={showAuthModal} onOpenChange={setShowAuthModal} defaultMode="login" />
       <SubscriptionModal open={showSubscriptionModal} onOpenChange={setShowSubscriptionModal} />
       {/* Agent subscription modal */}
