@@ -1,7 +1,6 @@
 import { DirectVideoPlayer } from "@/components/movies/DirectVideoPlayer";
 import { usesDirectVideoPlayer } from "@/lib/upload-policy";
-import { prepareMediaDownload, launchMediaDownload } from "@/lib/media-download";
-import { DownloadProgress, type DownloadState } from "@/components/movies/DownloadProgress";
+import { startOriginalDownload } from "@/lib/legacy-download";
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import {
@@ -76,7 +75,6 @@ export default function WatchPage() {
   const [relatedContent, setRelatedContent] = useState<(Movie | Series)[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDownloading, setIsDownloading] = useState(false);
-  const [downloadState, setDownloadState] = useState<DownloadState>(null);
   const [downloadFrame, setDownloadFrame] = useState<{ url: string; title: string; fallbackUrl?: string; fileId?: string } | null>(null);
 
   const [selectedSeason, setSelectedSeason] = useState(1);
@@ -224,19 +222,16 @@ export default function WatchPage() {
     if (!hasActiveSubscription) { setShowSubscriptionModal(true); return; }
     const selectedId = seriesId || id;
     if (!selectedId || (isSeries && !selectedEpisode?.id)) { toast({ title: "Select a video first", variant: "destructive" }); return; }
-    const selection = { kind: isSeries ? "series" as const : "movie" as const, id: selectedId, ...(isSeries ? { episodeId: selectedEpisode?.id } : {}) };
     if (isDownloading) return;
+    if (!rawVideoUrl) { toast({ title: "Download failed", description: "No video available to download.", variant: "destructive" }); return; }
     setIsDownloading(true);
-    setDownloadState("preparing");
     try {
-      await prepareMediaDownload(selection);
       if (subscription) await resetDownloadCountsForSubscription(user.id, buildSubscriptionResetKey(subscription));
       const result = await tryConsumeDownload(user.id, subscription?.plan);
-      if (!result.allowed) throw new Error("You have reached your download limit for today.");
-      launchMediaDownload(selection, message => { setDownloadState(null); toast({ title: "Download failed", description: message, variant: "destructive" }); });
-      setDownloadState("started");
+      if (!result.allowed) { setShowSubscriptionModal(true); throw new Error("You have reached your download limit for today."); }
+      const frame = await startOriginalDownload(selectedId, getDownloadFilename(), rawVideoUrl, user.id);
+      if (frame !== "direct") setDownloadFrame(frame);
     } catch (error) {
-      setDownloadState(null);
       toast({ title: "Download unavailable", description: error instanceof Error ? error.message : "Please try again.", variant: "destructive" });
     } finally { setIsDownloading(false); }
   };
@@ -770,7 +765,14 @@ export default function WatchPage() {
         agentOnly
       />
 
-      <DownloadProgress state={downloadState} title={getDownloadFilename()} onClose={() => setDownloadState(null)} />
+      <DownloadFrameDialog
+        open={!!downloadFrame}
+        url={downloadFrame?.url || ""}
+        title={downloadFrame?.title || ""}
+        fallbackUrl={downloadFrame?.fallbackUrl}
+        fileId={downloadFrame?.fileId}
+        onClose={() => setDownloadFrame(null)}
+      />
     </MainLayout>
   );
 }

@@ -18,8 +18,8 @@ import { SubscriptionModal } from "@/components/subscription/SubscriptionModal";
 import { useActivityTracker } from "@/hooks/useActivityTracker";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { DownloadProgress, type DownloadState } from "./DownloadProgress";
-import { prepareMediaDownload, launchMediaDownload } from "@/lib/media-download";
+import { startOriginalDownload, type DownloadFrame } from "@/lib/legacy-download";
+import { DownloadFrameDialog } from "@/components/DownloadFrameDialog";
 import { tryConsumeDownload } from "@/lib/download-limit";
 import { getEpisodesBySeriesId, type Episode } from "@/lib/firebase-db";
 
@@ -46,7 +46,8 @@ export function MovieCard({ movie, contentType, forceAgentBorder, agentPageMode 
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
   const [showAgentModal, setShowAgentModal] = useState(false);
   const [detailOpen, setDetailOpen] = useState(false);
-  const [downloadState, setDownloadState] = useState<DownloadState>(null);
+  const [downloadState, setDownloadState] = useState<"preparing" | null>(null);
+  const [downloadFrame, setDownloadFrame] = useState<DownloadFrame | null>(null);
   const [episodes, setEpisodes] = useState<Episode[]>([]);
   const [selectedEpisodeId, setSelectedEpisodeId] = useState("");
   const [episodeLoading, setEpisodeLoading] = useState(false);
@@ -120,19 +121,20 @@ export function MovieCard({ movie, contentType, forceAgentBorder, agentPageMode 
   };
   const download = async () => {
     if (downloadState || !checkAccess() || !user || !movie.id) return;
-    const selection = { kind: isComedyItem ? "comedy" as const : isSeries ? "series" as const : "movie" as const, id: movie.id, ...(isSeries ? { episodeId: selectedEpisodeId } : {}) };
+    const selected = episodes.find(ep => ep.id === selectedEpisodeId);
+    const rawUrl = isSeries ? selected?.videoUrl : (movie as any).videoUrl;
+    if (!rawUrl) { toast({ title: "Download failed", description: "No video available to download.", variant: "destructive" }); return; }
+    const name = isSeries && selected ? `${movie.title} S${String(selected.seasonNumber).padStart(2, "0")}E${String(selected.episodeNumber).padStart(2, "0")}` : movie.title;
     setDownloadState("preparing");
     try {
-      await prepareMediaDownload(selection);
       const result = await tryConsumeDownload(user.id, subscription?.plan);
       if (!result.allowed) throw new Error("You have reached your download limit for today.");
-      launchMediaDownload(selection, message => { setDownloadState(null); toast({ title: "Download failed", description: message, variant: "destructive" }); });
-      setDownloadState("started");
+      const frame = await startOriginalDownload(movie.id, name, rawUrl, user.id);
+      if (frame !== "direct") { setDetailOpen(false); setDownloadFrame(frame); }
       track("Download", `Download initiated for "${movie.title}"`);
     } catch (error) {
-      setDownloadState(null);
       toast({ title: "Download unavailable", description: error instanceof Error ? error.message : "Please try again.", variant: "destructive" });
-    }
+    } finally { setDownloadState(null); }
   };
 
   const handleDownloadPoster = async (e: Event) => {
@@ -210,7 +212,7 @@ export function MovieCard({ movie, contentType, forceAgentBorder, agentPageMode 
           </div>
         </DialogContent>
       </Dialog>
-      <DownloadProgress state={downloadState} title={movie.title} onClose={() => setDownloadState(null)} />
+      <DownloadFrameDialog open={!!downloadFrame} url={downloadFrame?.url || ""} title={downloadFrame?.title || ""} fallbackUrl={downloadFrame?.fallbackUrl} fileId={downloadFrame?.fileId} onClose={() => setDownloadFrame(null)} />
       <AuthModal open={showAuthModal} onOpenChange={setShowAuthModal} defaultMode="login" />
       <SubscriptionModal open={showSubscriptionModal} onOpenChange={setShowSubscriptionModal} />
       {/* Agent subscription modal */}
