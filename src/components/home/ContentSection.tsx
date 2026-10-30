@@ -76,10 +76,10 @@ export function ContentSection({ title, category = "trending", showGenres = fals
         {renderHeader()}
         <div className="library-grid">
           {[...Array(6)].map((_, i) => (
-            <div key={i} className="space-y-2">
+            <div key={i}>
               <Skeleton className="aspect-[2/3] rounded-lg" />
-              <Skeleton className="h-4 w-3/4" />
-              <Skeleton className="h-3 w-1/2" />
+              <div className="movie-name"><Skeleton className="h-3 w-3/4" /></div>
+              <div className="movie-meta"><Skeleton className="h-3 w-1/2" /></div>
             </div>
           ))}
         </div>

@@ -441,8 +441,11 @@ h1,h2,h3,h4 { font-family: "Sora", system-ui, sans-serif; }
 .movie-poster { width: 100%; aspect-ratio: 2 / 3; object-fit: cover; border-radius: 6px; box-shadow: var(--shadow-poster); outline: 1px solid color-mix(in oklab, var(--border) 60%, transparent); }
 .movie-holder { display: block; height: auto; width: 100%; padding: 0; white-space: normal; text-align: left; background: transparent; border-radius: 6px; transition: transform .15s; }
 .movie-holder:active { transform: scale(.95); }
-.movie-name { margin-top: 6px; padding-inline: 2px; font-size: 11px; line-height: 1.4; font-weight: 600; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.library-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); column-gap: 10px; row-gap: 12px; }
+.movie-name { margin-top: 6px; padding-inline: 2px; font-size: 12px; line-height: 1.4; height: 1.4em; font-weight: 600; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
+.movie-meta { margin-top: 2px; padding-inline: 2px; font-size: 10px; line-height: 1.4; height: 1.4em; color: var(--muted-foreground); white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
+.library-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; }
+@media (min-width: 640px) { .library-grid { grid-template-columns: repeat(4,minmax(0,1fr)); } }
+@media (min-width: 768px) { .library-grid { grid-template-columns: repeat(5,minmax(0,1fr)); } .movie-name { font-size: 14px; } .movie-meta { font-size: 12px; } }
 .liquid-dialog { border-radius: 32px !important; max-height: 90dvh; width: calc(100% - 32px) !important; overflow-y: auto; }
 .liquid-button { border-radius: 16px; transition: transform .15s, opacity .15s; }
 .liquid-button:active { transform: scale(.98); }
@@ -453,9 +456,8 @@ h1,h2,h3,h4 { font-family: "Sora", system-ui, sans-serif; }
 @keyframes liquid-wash { from { transform: translate(0,0) scale(1); } 50% { transform: translate(3vw,3vh) scale(1.08); } to { transform: translate(-3vw,5vh) scale(.98); } }
 @media (min-width: 1024px) {
   .library-shell { width: calc(100% - 224px); max-width: none; margin-left: 224px; margin-right: 0; padding-inline: 24px; padding-bottom: 24px; }
-  .library-grid { grid-template-columns: repeat(6,minmax(0,1fr)); gap: 16px; }
+  .library-grid { grid-template-columns: repeat(6,minmax(0,1fr)); gap: 12px; }
   .home-hero { height: 380px; }
-  .movie-name { font-size: 13px; }
 }
 @media (min-width: 1536px) { .library-grid { grid-template-columns: repeat(7,minmax(0,1fr)); } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }

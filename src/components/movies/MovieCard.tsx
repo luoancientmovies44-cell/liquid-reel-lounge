@@ -171,6 +171,7 @@ export function MovieCard({ movie, contentType, forceAgentBorder, agentPageMode 
       <div className="w-full">
         <img src={posterUrl} alt={movie.title} loading="lazy" className="movie-poster" onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = "/placeholder.svg"; }} />
         <h3 className="movie-name">{episodeInfo ? episodeInfo.episodeTitle : movie.title}</h3>
+        <p className="movie-meta">{episodeInfo ? `${movie.title} · ${episodeInfo.seasonLabel || `S${episodeInfo.seasonNumber}`}E${episodeInfo.episodeNumber}` : [year, genreDisplay].filter(Boolean).join(" · ") || (isSeries ? "TV Series" : "Movie")}</p>
       </div>
     </Button>
   );
