@@ -1,7 +1,8 @@
 import { MovieCard } from "@/components/movies/MovieCard";
 import type { Movie, Series, ContentItem } from "@/lib/firebase-db";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { orderMovieParts } from "@/lib/part-order";
 
 interface MovieGridProps {
   items: (Movie | Series | ContentItem)[];
@@ -11,8 +12,8 @@ interface MovieGridProps {
 
 export function MovieGrid({ items, contentType, columns }: MovieGridProps) {
   const gridRef = useRef<HTMLDivElement>(null);
-  // Keep each page's original catalogue order (recent, trending, or rating).
-  const ordered = items;
+  // Retain catalogue ranking while displaying matching parts first-to-last.
+  const ordered = useMemo(() => orderMovieParts(items), [items]);
   const [visible, setVisible] = useState<Set<number>>(() => new Set());
 
   useEffect(() => {
