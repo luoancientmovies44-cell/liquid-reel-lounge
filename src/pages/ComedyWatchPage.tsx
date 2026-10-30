@@ -224,7 +224,7 @@ export default function ComedyWatchPage() {
         {/* Video Player — matches movie WatchPage */}
         <div
           id="video-player"
-          className="relative bg-black w-full scroll-mt-20 overflow-hidden max-w-full"
+          className="relative bg-foreground w-full scroll-mt-20 overflow-hidden max-w-full"
           style={{ aspectRatio: "16 / 9" }}
         >
           {usesDirectVideoPlayer(comedy.videoUrl) ? (
@@ -239,7 +239,7 @@ export default function ComedyWatchPage() {
                 title={comedy.title}
               />
               {/* Block Google Drive popout icon — solid overlay with logo */}
-              <div className="absolute top-0 right-0 h-12 w-16 sm:h-14 sm:w-20 z-20 flex items-center justify-center bg-black pointer-events-auto">
+              <div className="absolute top-0 right-0 h-12 w-16 sm:h-14 sm:w-20 z-20 flex items-center justify-center bg-foreground pointer-events-auto">
                 <img
                   src="/luo-ancient-logo.png"
                   alt="Luo Ancient"
@@ -247,7 +247,7 @@ export default function ComedyWatchPage() {
                 />
               </div>
               {/* Extra top strip to fully block Drive header on mobile */}
-              <div className="absolute top-0 left-0 right-16 sm:right-20 h-8 sm:h-10 z-10 bg-black pointer-events-none" />
+              <div className="absolute top-0 left-0 right-16 sm:right-20 h-8 sm:h-10 z-10 bg-foreground pointer-events-none" />
             </div>
           ) : (
             <>
@@ -257,9 +257,9 @@ export default function ComedyWatchPage() {
                 className="w-full h-full object-cover opacity-30"
                 onError={(e) => ((e.currentTarget as HTMLImageElement).src = "/placeholder.svg")}
               />
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60">
-                <Lock className="w-10 h-10 text-white/70 mb-2" />
-                <p className="text-white/80 text-sm">Video unavailable</p>
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-foreground/60">
+                <Lock className="w-10 h-10 text-foreground/70 mb-2" />
+                <p className="text-foreground/80 text-sm">Video unavailable</p>
               </div>
             </>
           )}
@@ -291,8 +291,8 @@ export default function ComedyWatchPage() {
         {/* Content Info */}
         <div className="px-3 sm:px-4 lg:px-6 py-4 sm:py-5">
           <div className="grid grid-cols-[auto_minmax(0,1fr)] items-start gap-3 mb-4">
-            <div className="w-10 h-10 shrink-0 rounded-full bg-pink-500/20 flex items-center justify-center">
-              <Trophy className="w-5 h-5 text-pink-500" />
+            <div className="w-10 h-10 shrink-0 rounded-full bg-primary/20 flex items-center justify-center">
+              <Trophy className="w-5 h-5 text-primary" />
             </div>
             <div className="min-w-0">
               <h1 className="text-base sm:text-xl lg:text-2xl font-bold leading-tight break-words">
@@ -300,7 +300,7 @@ export default function ComedyWatchPage() {
               </h1>
               <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs sm:text-sm text-muted-foreground mt-1.5">
                 <span className="flex items-center gap-1">
-                  <Star className="w-3.5 h-3.5 text-yellow-500 fill-yellow-500" />
+                  <Star className="w-3.5 h-3.5 text-warning fill-warning" />
                   <span className="text-foreground font-medium">{comedy.rating}</span>
                 </span>
                 <span>•</span>
@@ -314,7 +314,7 @@ export default function ComedyWatchPage() {
                 {comedy.vjName && (
                   <>
                     <span>•</span>
-                    <span className="text-purple-500 truncate max-w-[120px]">VJ {comedy.vjName}</span>
+                    <span className="text-primary truncate max-w-[120px]">VJ {comedy.vjName}</span>
                   </>
                 )}
               </div>
@@ -356,26 +356,26 @@ export default function ComedyWatchPage() {
                       onError={(e) => ((e.currentTarget as HTMLImageElement).src = "/placeholder.svg")}
                     />
                     {c.duration ? (
-                      <div className="absolute bottom-2 right-2 bg-black/80 text-white text-[10px] font-medium px-1.5 py-0.5 rounded">
+                      <div className="absolute bottom-2 right-2 bg-foreground/80 text-foreground text-[10px] font-medium px-1.5 py-0.5 rounded">
                         {c.duration}m
                       </div>
                     ) : null}
-                    <div className="absolute inset-0 hidden md:flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <div className="w-12 h-12 rounded-full bg-pink-500 flex items-center justify-center shadow-lg">
-                        <Play className="w-6 h-6 text-white fill-white ml-0.5" />
+                    <div className="absolute inset-0 hidden md:flex items-center justify-center bg-foreground/40 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center shadow-lg">
+                        <Play className="w-6 h-6 text-foreground fill-foreground ml-0.5" />
                       </div>
                     </div>
                   </div>
                   <div className="mt-2.5 flex gap-3">
-                    <div className="w-9 h-9 shrink-0 rounded-full bg-pink-500/20 flex items-center justify-center">
-                      <Trophy className="w-4 h-4 text-pink-500" />
+                    <div className="w-9 h-9 shrink-0 rounded-full bg-primary/20 flex items-center justify-center">
+                      <Trophy className="w-4 h-4 text-primary" />
                     </div>
                     <div className="min-w-0 flex-1">
                       <h3 className="text-sm font-semibold line-clamp-2 group-hover:text-primary transition-colors">
                         {c.title}
                       </h3>
                       <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1">
-                        <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
+                        <Star className="w-3 h-3 text-warning fill-warning" />
                         <span>{c.rating}</span>
                         <span>•</span>
                         <span>{c.releaseYear}</span>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -135,18 +135,12 @@ export function AuthModal({ open, onOpenChange, defaultMode = "login" }: AuthMod
             <img 
               src="/luo-ancient-logo.png" 
               alt="Luo Ancient" 
-              className="w-12 h-12 rounded-full mx-auto mb-3"
+              className="w-28 h-28 object-contain mx-auto mb-3"
             />
-            <h2 className="text-xl font-bold">
-              {view === "login" && "Welcome Back"}
-              {view === "signup" && "Create Account"}
-              {view === "reset" && "Reset Password"}
-            </h2>
-            <p className="text-sm text-muted-foreground mt-1">
-              {view === "login" && "Sign in to continue watching"}
-              {view === "signup" && "Join Luo Ancient Movies"}
-              {view === "reset" && "Enter your email to reset"}
-            </p>
+            <DialogTitle className="brand-title brand-heading">LUO ANCIENT AGENT</DialogTitle>
+            <DialogDescription className="mt-2">
+              {view === "login" ? "Sign in to browse the library" : view === "signup" ? "Create your account" : "Reset your password"}
+            </DialogDescription>
           </div>
 
           {/* Google Login */}
@@ -190,6 +184,7 @@ export function AuthModal({ open, onOpenChange, defaultMode = "login" }: AuthMod
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
+                    autoFocus
                     id="email"
                     type="email"
                     placeholder="you@example.com"

@@ -82,8 +82,8 @@ export default function AdminGreetings() {
     <div className="space-y-6 max-w-6xl mx-auto">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-amber-500 flex items-center justify-center">
-            <Megaphone className="w-5 h-5 text-white" />
+          <div className="w-10 h-10 rounded-lg bg-warning flex items-center justify-center">
+            <Megaphone className="w-5 h-5 text-foreground" />
           </div>
           <div>
             <h1 className="text-xl font-bold">Greetings</h1>
@@ -137,7 +137,7 @@ export default function AdminGreetings() {
                   setSelectedGreeting(g);
                 }
               }}
-              className="bg-[#0d1e36] border-border/50 cursor-pointer transition-colors hover:border-primary/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="glass border-border/50 cursor-pointer transition-colors hover:border-primary/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               <CardContent className="p-5 space-y-3">
                 <div className="flex items-start justify-between gap-3">
@@ -150,7 +150,7 @@ export default function AdminGreetings() {
                     </div>
                   </div>
                   <div className="text-right shrink-0">
-                    <p className="font-bold text-green-500">UGX {(g.amount || 0).toLocaleString()}</p>
+                    <p className="font-bold text-success">UGX {(g.amount || 0).toLocaleString()}</p>
                     <p className="text-[11px] text-muted-foreground">{g.createdAt.toLocaleString()}</p>
                   </div>
                 </div>
@@ -162,7 +162,7 @@ export default function AdminGreetings() {
                       <span className="text-sm text-muted-foreground">—</span>
                     ) : (
                       g.greetingNames.map((n, i) => (
-                        <span key={i} className="text-sm px-2 py-1 rounded-md bg-amber-500/15 text-amber-400">
+                        <span key={i} className="text-sm px-2 py-1 rounded-md bg-warning/15 text-warning">
                           {n}
                         </span>
                       ))
@@ -241,7 +241,7 @@ export default function AdminGreetings() {
                   <p className="mb-2 text-xs font-medium text-muted-foreground">People greeted</p>
                   <div className="flex flex-wrap gap-2">
                     {selectedGreeting.greetingNames.length > 0 ? selectedGreeting.greetingNames.map((name, index) => (
-                      <span key={`${name}-${index}`} className="rounded-md bg-primary/15 px-3 py-1.5 text-sm font-medium text-white">
+                      <span key={`${name}-${index}`} className="rounded-md bg-primary/15 px-3 py-1.5 text-sm font-medium text-foreground">
                         {name}
                       </span>
                     )) : <span className="text-sm text-muted-foreground">—</span>}

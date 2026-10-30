@@ -171,25 +171,25 @@ export default function AdminSubscriptions() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <Card className="cursor-pointer bg-[#0d1e36] border-border/50" onClick={() => setFilter("all")}>
+        <Card className="cursor-pointer glass border-border/50" onClick={() => setFilter("all")}>
           <CardContent className="p-4">
             <div className="text-sm text-muted-foreground">Total Users</div>
             <div className="text-2xl font-bold">{stats.total}</div>
           </CardContent>
         </Card>
-        <Card className="cursor-pointer bg-[#0d1e36] border-green-500/50" onClick={() => setFilter("active")}>
+        <Card className="cursor-pointer bg-glass-strong border-success/50" onClick={() => setFilter("active")}>
           <CardContent className="p-4">
-            <div className="text-sm text-green-500">Active</div>
-            <div className="text-2xl font-bold text-green-500">{stats.active}</div>
+            <div className="text-sm text-success">Active</div>
+            <div className="text-2xl font-bold text-success">{stats.active}</div>
           </CardContent>
         </Card>
-        <Card className="cursor-pointer bg-[#0d1e36] border-orange-500/50" onClick={() => setFilter("expired")}>
+        <Card className="cursor-pointer bg-glass-strong border-warning/50" onClick={() => setFilter("expired")}>
           <CardContent className="p-4">
-            <div className="text-sm text-orange-500">Expired</div>
-            <div className="text-2xl font-bold text-orange-500">{stats.expired}</div>
+            <div className="text-sm text-warning">Expired</div>
+            <div className="text-2xl font-bold text-warning">{stats.expired}</div>
           </CardContent>
         </Card>
-        <Card className="cursor-pointer bg-[#0d1e36] border-border/50" onClick={() => setFilter("free")}>
+        <Card className="cursor-pointer glass border-border/50" onClick={() => setFilter("free")}>
           <CardContent className="p-4">
             <div className="text-sm text-muted-foreground">Free Users</div>
             <div className="text-2xl font-bold">{stats.free}</div>
@@ -220,7 +220,7 @@ export default function AdminSubscriptions() {
         </Select>
       </div>
 
-      <Card className="bg-[#0d1e36] border-border/50">
+      <Card className="glass border-border/50">
         <CardContent className="p-0">
           <Table>
             <TableHeader>
@@ -256,7 +256,7 @@ export default function AdminSubscriptions() {
                     </TableCell>
                     <TableCell>
                       {isSubscriptionActive(user) ? (
-                        <Badge className="bg-green-500">Active</Badge>
+                        <Badge className="bg-success">Active</Badge>
                       ) : user.subscription ? (
                         <Badge variant="destructive">Expired</Badge>
                       ) : (
@@ -329,7 +329,7 @@ export default function AdminSubscriptions() {
               <p className="text-sm text-muted-foreground">{selectedUser?.email}</p>
               {selectedUser?.subscription && isSubscriptionActive(selectedUser) && (
                 <div className="mt-2">
-                  <Badge className="bg-green-500">{selectedUser.subscription.plan}</Badge>
+                  <Badge className="bg-success">{selectedUser.subscription.plan}</Badge>
                   <span className="text-xs text-muted-foreground ml-2">
                     Expires: {format(new Date(selectedUser.subscription.expiresAt), "MMM dd, yyyy")}
                   </span>

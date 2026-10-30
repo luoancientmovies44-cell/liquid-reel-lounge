@@ -35,9 +35,6 @@ export function Footer() {
               />
               <h2 className="text-xl font-bold">Luo Ancient</h2>
             </div>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Watch movies and TV series online and for free. Download the latest movies and popular TV series in HD quality.
-            </p>
           </div>
 
           {/* Company */}
@@ -98,7 +95,7 @@ export function Footer() {
         <div className="pt-6 border-t border-border">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-sm text-muted-foreground text-center md:text-left">
-              © 2025 Luo Ancient. All rights reserved.
+              © 2026 Luo Ancient. All rights reserved.
             </p>
             <div className="flex items-center gap-6">
               <Link to="/terms" className="text-sm text-muted-foreground hover:text-foreground transition-colors">

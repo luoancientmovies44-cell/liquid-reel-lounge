@@ -36,19 +36,19 @@ interface Stats {
 }
 
 const actionCards = [
-  { title: "Upload Movies", description: "Add new movies to the platform", href: "/admin/movies", icon: Film, color: "bg-blue-500" },
-  { title: "Upload Series", description: "Add new TV series", href: "/admin/series", icon: Tv, color: "bg-pink-500" },
-  { title: "Upload Episodes", description: "Add episodes to existing series", href: "/admin/episodes", icon: PlayCircle, color: "bg-green-500" },
-  { title: "Upload Apps", description: "Add mobile and desktop apps", href: "/admin/apps", icon: Download, color: "bg-purple-500" },
-  { title: "Upload Adverts", description: "Manage promotional content", href: "/admin/adverts", icon: Megaphone, color: "bg-red-500" },
-  { title: "Hero Images", description: "Manage homepage hero slider images", href: "/admin/hero-slides", icon: Image, color: "bg-cyan-500" },
-  { title: "Subscription Plans", description: "Add, edit or remove plans and prices", href: "/admin/plans", icon: CreditCard, color: "bg-teal-500" },
-  { title: "Transactions", description: "View payment transactions", href: "/admin/transactions", icon: CreditCard, color: "bg-yellow-500" },
-  { title: "User Activities", description: "Track all user interactions", href: "/admin/activities", icon: BarChart3, color: "bg-indigo-500" },
-  { title: "Registered Agents", description: "View and manage agent registrations", href: "/admin/registered-agents", icon: Shield, color: "bg-orange-600" },
-  { title: "SMS Notifications", description: "Send SMS and view sent messages", href: "/admin/sms", icon: MessageSquare, color: "bg-emerald-500" },
-  { title: "Greeting", description: "View successful greeting payments", href: "/admin/greetings", icon: Megaphone, color: "bg-amber-500" },
-  { title: "Manage Users", description: "User management and permissions", href: "/admin/users", icon: Users, color: "bg-orange-500" },
+  { title: "Upload Movies", description: "Add new movies to the platform", href: "/admin/movies", icon: Film, color: "bg-primary" },
+  { title: "Upload Series", description: "Add new TV series", href: "/admin/series", icon: Tv, color: "bg-primary" },
+  { title: "Upload Episodes", description: "Add episodes to existing series", href: "/admin/episodes", icon: PlayCircle, color: "bg-success" },
+  { title: "Upload Apps", description: "Add mobile and desktop apps", href: "/admin/apps", icon: Download, color: "bg-primary" },
+  { title: "Upload Adverts", description: "Manage promotional content", href: "/admin/adverts", icon: Megaphone, color: "bg-destructive" },
+  { title: "Hero Images", description: "Manage homepage hero slider images", href: "/admin/hero-slides", icon: Image, color: "bg-primary" },
+  { title: "Subscription Plans", description: "Add, edit or remove plans and prices", href: "/admin/plans", icon: CreditCard, color: "bg-primary" },
+  { title: "Transactions", description: "View payment transactions", href: "/admin/transactions", icon: CreditCard, color: "bg-warning" },
+  { title: "User Activities", description: "Track all user interactions", href: "/admin/activities", icon: BarChart3, color: "bg-primary" },
+  { title: "Registered Agents", description: "View and manage agent registrations", href: "/admin/registered-agents", icon: Shield, color: "bg-warning" },
+  { title: "SMS Notifications", description: "Send SMS and view sent messages", href: "/admin/sms", icon: MessageSquare, color: "bg-success" },
+  { title: "Greeting", description: "View successful greeting payments", href: "/admin/greetings", icon: Megaphone, color: "bg-warning" },
+  { title: "Manage Users", description: "User management and permissions", href: "/admin/users", icon: Users, color: "bg-warning" },
 ];
 
 export default function AdminDashboard() {
@@ -79,15 +79,15 @@ export default function AdminDashboard() {
   const isDashboardHome = location.pathname === "/admin/dashboard";
 
   return (
-    <div className="min-h-screen bg-[#0a1628]">
+    <div className="library-shell min-h-screen">
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-border/50 bg-[#0d1e36]">
+      <header className="glass sticky top-3 z-40 mt-3 rounded-3xl">
         <div className="flex items-center justify-between px-4 lg:px-8 py-4">
           <div className="flex items-center gap-3">
             <img src={luoAncientLogo} alt="Logo" className="w-10 h-10 rounded-full" />
             <div>
-              <h1 className="text-xl font-bold text-cyan-400">Admin Dashboard</h1>
-              <p className="text-xs text-muted-foreground">Manage your MovieBox platform</p>
+              <h1 className="text-xl font-bold text-primary">Admin Dashboard</h1>
+              
             </div>
           </div>
           <div className="flex items-center gap-4">
@@ -99,7 +99,7 @@ export default function AdminDashboard() {
             </Link>
             {user && (
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center text-white font-medium">
+                <div className="w-8 h-8 rounded-full bg-warning flex items-center justify-center text-foreground font-medium">
                   {user.name?.charAt(0).toUpperCase() || "A"}
                 </div>
                 <span className="text-sm font-medium hidden sm:inline">{user.name}</span>
@@ -109,7 +109,10 @@ export default function AdminDashboard() {
         </div>
       </header>
 
-      <main className="p-4 lg:p-8">
+      <nav className="glass mt-4 grid grid-cols-4 gap-1 rounded-3xl p-1" aria-label="Admin sections">
+        {[{ label: "OVERVIEW", path: "/admin/dashboard" }, { label: "MOVIES", path: "/admin/movies" }, { label: "ACCESS", path: "/admin/users" }, { label: "ACTIVITIES", path: "/admin/activities" }].map(tab => <Button key={tab.path} asChild variant="ghost" className={`text-[11px] ${location.pathname === tab.path ? "glass-strong text-primary" : "text-muted-foreground"}`}><Link to={tab.path}>{tab.label}</Link></Button>)}
+      </nav>
+      <main className="py-6">
         {isDashboardHome ? (
           <div className="space-y-8 max-w-7xl mx-auto">
             {/* Platform Statistics */}
@@ -117,30 +120,30 @@ export default function AdminDashboard() {
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold text-foreground">Platform Statistics</h2>
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                  <span className="w-2 h-2 rounded-full bg-success animate-pulse"></span>
                   Live
                 </div>
               </div>
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <Card className="bg-[#0d1e36] border-border/50">
+                <Card className="glass border-border/50">
                   <CardContent className="p-6">
                     <div className="text-4xl font-bold text-foreground">{stats?.totalMovies || 0}</div>
                     <div className="text-sm text-muted-foreground mt-1">Total Movies</div>
                   </CardContent>
                 </Card>
-                <Card className="bg-[#0d1e36] border-border/50">
+                <Card className="glass border-border/50">
                   <CardContent className="p-6">
                     <div className="text-4xl font-bold text-foreground">{stats?.totalSeries || 0}</div>
                     <div className="text-sm text-muted-foreground mt-1">Total Series</div>
                   </CardContent>
                 </Card>
-                <Card className="bg-[#0d1e36] border-border/50">
+                <Card className="glass border-border/50">
                   <CardContent className="p-6">
                     <div className="text-4xl font-bold text-foreground">{stats?.totalEpisodes || 0}</div>
                     <div className="text-sm text-muted-foreground mt-1">Total Episodes</div>
                   </CardContent>
                 </Card>
-                <Card className="bg-[#0d1e36] border-border/50">
+                <Card className="glass border-border/50">
                   <CardContent className="p-6">
                     <div className="text-4xl font-bold text-foreground">{stats?.activeSubscriptions || 0}</div>
                     <div className="text-sm text-muted-foreground mt-1">Active Users</div>
@@ -155,10 +158,10 @@ export default function AdminDashboard() {
                 const Icon = card.icon;
                 return (
                   <Link key={card.href + card.title} to={card.href}>
-                    <Card className="bg-[#0d1e36] border-border/50 hover:border-primary/50 transition-all cursor-pointer h-full">
+                    <Card className="glass border-border/50 hover:border-primary/50 transition-all cursor-pointer h-full">
                       <CardContent className="p-6">
                         <div className={`w-12 h-12 rounded-lg ${card.color} flex items-center justify-center mb-4`}>
-                          <Icon className="w-6 h-6 text-white" />
+                          <Icon className="w-6 h-6 text-foreground" />
                         </div>
                         <h3 className="font-semibold text-foreground">{card.title}</h3>
                         <p className="text-sm text-muted-foreground mt-1">{card.description}</p>
@@ -170,7 +173,7 @@ export default function AdminDashboard() {
             </div>
 
             {/* Platform Overview */}
-            <Card className="bg-[#0d1e36] border-border/50">
+            <Card className="glass border-border/50">
               <CardContent className="p-6">
                 <h2 className="text-lg font-semibold text-foreground mb-6">Platform Overview</h2>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -198,7 +201,7 @@ export default function AdminDashboard() {
                     <div className="space-y-3">
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Active Subscriptions:</span>
-                        <span className="font-medium text-green-500">{stats?.activeSubscriptions || 0}</span>
+                        <span className="font-medium text-success">{stats?.activeSubscriptions || 0}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Total Users:</span>

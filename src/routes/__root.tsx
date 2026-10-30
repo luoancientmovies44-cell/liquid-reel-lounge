@@ -85,10 +85,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary" },
       { name: "twitter:title", content: "Luo Ancient Movies - Stream and Download Luo translated Movies" },
       { name: "twitter:description", content: "Wajoli kanongo film mabeco i leb luo i dwon vj mapol" },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/61bd7e82-9305-4770-b37a-d461a288f617" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/61bd7e82-9305-4770-b37a-d461a288f617" },
     ],
     links: [
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Baloo+2:wght@800&family=Manrope:wght@400;500;600;700&family=Sora:wght@500;600;700&display=swap" },
       {
         rel: "stylesheet",
         href: appCss,

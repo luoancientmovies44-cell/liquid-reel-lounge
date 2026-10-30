@@ -264,7 +264,7 @@ export function GreetingAdvertModal({ open, onOpenChange }: GreetingAdvertModalP
           <>
             <DialogHeader>
               <DialogTitle className="text-xl flex items-center gap-2">
-                <Megaphone className="w-5 h-5 text-amber-500" />
+                <Megaphone className="w-5 h-5 text-warning" />
                 Send a Greeting (Amotoment)
               </DialogTitle>
               <DialogDescription>
@@ -298,14 +298,14 @@ export function GreetingAdvertModal({ open, onOpenChange }: GreetingAdvertModalP
                   <button
                     type="button"
                     onClick={() => setPaymentMethod("mobile")}
-                    className={`rounded-lg border-2 px-3 py-2 text-sm font-semibold transition-colors ${paymentMethod === "mobile" ? "border-amber-500 bg-amber-500/10 text-white" : "border-border text-white/70 hover:border-amber-500/50 hover:text-white"}`}
+                    className={`rounded-lg border-2 px-3 py-2 text-sm font-semibold transition-colors ${paymentMethod === "mobile" ? "border-warning bg-warning/10 text-foreground" : "border-border text-foreground/70 hover:border-warning/50 hover:text-foreground"}`}
                   >
                     Mobile Money
                   </button>
                   <button
                     type="button"
                     onClick={() => setPaymentMethod("card")}
-                    className={`rounded-lg border-2 px-3 py-2 text-sm font-semibold transition-colors ${paymentMethod === "card" ? "border-amber-500 bg-amber-500/10 text-white" : "border-border text-white/70 hover:border-amber-500/50 hover:text-white"}`}
+                    className={`rounded-lg border-2 px-3 py-2 text-sm font-semibold transition-colors ${paymentMethod === "card" ? "border-warning bg-warning/10 text-foreground" : "border-border text-foreground/70 hover:border-warning/50 hover:text-foreground"}`}
                   >
                     Card
                   </button>
@@ -321,7 +321,7 @@ export function GreetingAdvertModal({ open, onOpenChange }: GreetingAdvertModalP
               {paymentMethod === "card" && (
                 <p className="text-xs text-muted-foreground">You will enter your card details securely on the Pesapal checkout page.</p>
               )}
-              <Button onClick={handlePay} className="w-full bg-amber-500 hover:bg-amber-600 text-white" size="lg">
+              <Button onClick={handlePay} className="w-full bg-warning hover:bg-warning text-foreground" size="lg">
                 Pay UGX 5,000
               </Button>
               <p className="text-xs text-center text-muted-foreground">
@@ -337,7 +337,7 @@ export function GreetingAdvertModal({ open, onOpenChange }: GreetingAdvertModalP
               <DialogTitle className="sr-only">Processing</DialogTitle>
               <DialogDescription className="sr-only">Setting up your payment</DialogDescription>
             </DialogHeader>
-            <Loader2 className="w-14 h-14 mx-auto animate-spin text-amber-500" />
+            <Loader2 className="w-14 h-14 mx-auto animate-spin text-warning" />
             <p className="text-muted-foreground">Setting up your payment...</p>
           </div>
         )}
@@ -363,10 +363,10 @@ export function GreetingAdvertModal({ open, onOpenChange }: GreetingAdvertModalP
               <DialogTitle className="sr-only">Payment successful</DialogTitle>
               <DialogDescription className="sr-only">{statusMessage}</DialogDescription>
             </DialogHeader>
-            <div className="w-20 h-20 rounded-full bg-green-500/20 mx-auto flex items-center justify-center">
-              <CheckCircle className="w-10 h-10 text-green-500" />
+            <div className="w-20 h-20 rounded-full bg-success/20 mx-auto flex items-center justify-center">
+              <CheckCircle className="w-10 h-10 text-success" />
             </div>
-            <h2 className="text-2xl font-bold text-green-500">Payment Successful!</h2>
+            <h2 className="text-2xl font-bold text-success">Payment Successful!</h2>
             <p className="text-muted-foreground px-4">{statusMessage}</p>
             {confirmationCode && (
               <p className="text-sm text-muted-foreground">Confirmation: <span className="font-mono">{confirmationCode}</span></p>
@@ -381,10 +381,10 @@ export function GreetingAdvertModal({ open, onOpenChange }: GreetingAdvertModalP
               <DialogTitle className="sr-only">Payment processing</DialogTitle>
               <DialogDescription className="sr-only">{statusMessage}</DialogDescription>
             </DialogHeader>
-            <div className="w-20 h-20 rounded-full bg-yellow-500/20 mx-auto flex items-center justify-center">
-              <AlertCircle className="w-10 h-10 text-yellow-500" />
+            <div className="w-20 h-20 rounded-full bg-warning/20 mx-auto flex items-center justify-center">
+              <AlertCircle className="w-10 h-10 text-warning" />
             </div>
-            <h2 className="text-2xl font-bold text-yellow-500">Payment Processing</h2>
+            <h2 className="text-2xl font-bold text-warning">Payment Processing</h2>
             <p className="text-muted-foreground px-4">{statusMessage}</p>
             <Button onClick={() => handleClose(false)} variant="outline" className="w-full max-w-xs">Close</Button>
           </div>

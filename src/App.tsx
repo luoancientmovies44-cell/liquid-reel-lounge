@@ -70,7 +70,6 @@ const App = () => (
           <Sonner />
           <GlobalClickTracker />
           <GoogleOneTap />
-          <WelcomeSplash />
           <AgentMovieNotification />
 
           <BrowserRouter>

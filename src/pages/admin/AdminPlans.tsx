@@ -147,7 +147,7 @@ export default function AdminPlans() {
       </div>
       <div className="flex flex-wrap items-center justify-between gap-3 pt-6 border-t">
         <div>
-          <h2 className="text-xl font-bold text-orange-500">Agent Plans</h2>
+          <h2 className="text-xl font-bold text-warning">Agent Plans</h2>
           <p className="text-sm text-muted-foreground">Plans that unlock ALL movies plus Agent movies. Names must start with "Agent".</p>
         </div>
         <Button variant="outline" onClick={addAgent}><Plus className="w-4 h-4 mr-1" /> Add agent plan</Button>
@@ -155,7 +155,7 @@ export default function AdminPlans() {
       {agentPlans.length === 0 && <p className="text-muted-foreground">No agent plans. Click "Add agent plan".</p>}
       <div className="grid gap-4 md:grid-cols-2">
         {agentPlans.map((p) => (
-          <Card key={p.id} className="border-orange-500/40">
+          <Card key={p.id} className="border-warning/40">
             <CardContent className="p-4 grid grid-cols-2 gap-3">
               <div className="col-span-2">
                 <Label>Plan name</Label>

@@ -1,6 +1,7 @@
 import { DirectVideoPlayer } from "@/components/movies/DirectVideoPlayer";
 import { usesDirectVideoPlayer } from "@/lib/upload-policy";
-import { startDirectVideoDownload } from "@/lib/direct-download";
+import { prepareMediaDownload, launchMediaDownload } from "@/lib/media-download";
+import { DownloadProgress, type DownloadState } from "@/components/movies/DownloadProgress";
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import {
@@ -75,6 +76,7 @@ export default function WatchPage() {
   const [relatedContent, setRelatedContent] = useState<(Movie | Series)[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [downloadState, setDownloadState] = useState<DownloadState>(null);
   const [downloadFrame, setDownloadFrame] = useState<{ url: string; title: string; fallbackUrl?: string; fileId?: string } | null>(null);
 
   const [selectedSeason, setSelectedSeason] = useState(1);
@@ -217,121 +219,26 @@ export default function WatchPage() {
       return;
     }
 
-    // Check if this is an agent episode — require Agent Plan
-    const isAgentContent = isSeries && selectedEpisode?.isAgent;
-    if (isAgentContent && !hasAgentPlan) {
-      setShowAgentSubscription(true);
-      return;
-    }
-
-    // Check subscription (admin has free access via hasActiveSubscription)
-    if (!hasActiveSubscription) {
-      setShowSubscriptionModal(true);
-      return;
-    }
-
-    const fileId = getFileIdFromUrl(rawVideoUrl);
-    const fallbackUrl = fileId
-      ? `https://drive.usercontent.google.com/download?id=${fileId}&export=download&confirm=t`
-      : rawVideoUrl ?? "";
-    // Enforce daily download limit per plan (admin/lifetime/agent unlimited)
+    const isAgentContent = isSeries ? selectedEpisode?.isAgent : movie ? isMovieInAgentMode(movie) : false;
+    if (isAgentContent && !hasAgentPlan) { setShowAgentSubscription(true); return; }
+    if (!hasActiveSubscription) { setShowSubscriptionModal(true); return; }
+    const selectedId = seriesId || id;
+    if (!selectedId || (isSeries && !selectedEpisode?.id)) { toast({ title: "Select a video first", variant: "destructive" }); return; }
+    const selection = { kind: isSeries ? "series" as const : "movie" as const, id: selectedId, ...(isSeries ? { episodeId: selectedEpisode?.id } : {}) };
+    if (isDownloading) return;
+    setIsDownloading(true);
+    setDownloadState("preparing");
     try {
-      const planName = subscription?.plan;
-      if (subscription) {
-        const resetKey = buildSubscriptionResetKey(subscription);
-        await resetDownloadCountsForSubscription(user.id, resetKey);
-      }
-      const limit = getDailyLimitForPlan(planName);
-      const consume = await tryConsumeDownload(user.id, planName);
-      if (!consume.allowed) {
-        track(
-          "Download Limit Reached",
-          `Tried to download "${currentContent?.title || "unknown"}" after using ${consume.count}/${limit} on ${planName} plan`,
-        );
-        toast({
-          title: "YOU HAVE REACHED YOUR DOWNLOAD LIMIT FOR TODAY",
-          description: `Your ${planName} plan allows ${limit} downloads per day (resets at midnight). Upgrade your subscription for more daily downloads.`,
-          variant: "destructive",
-        });
-        setShowSubscriptionModal(true);
-        return;
-      }
-      if (limit !== -1) {
-        toast({
-          title: "Download started",
-          description: `Daily downloads used: ${consume.count}/${limit}`,
-        });
-      }
-    } catch (e) {
-      console.error("Download limit check failed", e);
-    }
-
-    try {
-      if (!rawVideoUrl) {
-        toast({
-          title: "Download failed",
-          description: "No video available to download.",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      setIsDownloading(true);
-      const filename = getDownloadFilename();
-
-      if (usesDirectVideoPlayer(rawVideoUrl)) {
-        const extension = new URL(rawVideoUrl).pathname.match(/\.(mp4|m4v|webm|mov|m3u8)$/i)?.[1] || "mp4";
-        startDirectVideoDownload(rawVideoUrl, `${filename}.${extension}`);
-        setIsDownloading(false);
-        return;
-      }
-
-      const contentDownloadId = isSeries
-        ? `${seriesId || "series"}-${selectedEpisode?.id || selectedEpisode?.episodeNumber || "episode"}`
-        : id || "movie";
-      const downloadLink = await createDownloadLink(
-        contentDownloadId,
-        filename,
-        rawVideoUrl,
-        user.id,
-      );
-
-      if (!downloadLink) {
-        toast({
-          title: "Download failed",
-          description: "Invalid video URL.",
-          variant: "destructive",
-        });
-        setIsDownloading(false);
-        return;
-      }
-
-
-      // Desktop: open the in-site download frame; the Drive confirmation page
-      // renders inside it, and clicking "Download anyway" hands off to the
-      // browser's native download manager.
-      setDownloadFrame({
-        url: downloadLink.downloadUrl,
-        title: downloadLink.filename,
-        fallbackUrl,
-        fileId: fileId ?? undefined,
-      });
-
-      toast({
-        title: "Download ready",
-        description: `Follow the download prompt to save ${downloadLink.filename}`,
-      });
-
-      setIsDownloading(false);
+      await prepareMediaDownload(selection);
+      if (subscription) await resetDownloadCountsForSubscription(user.id, buildSubscriptionResetKey(subscription));
+      const result = await tryConsumeDownload(user.id, subscription?.plan);
+      if (!result.allowed) throw new Error("You have reached your download limit for today.");
+      launchMediaDownload(selection, message => { setDownloadState(null); toast({ title: "Download failed", description: message, variant: "destructive" }); });
+      setDownloadState("started");
     } catch (error) {
-      console.error("Download error:", error);
-      toast({
-        title: "Download failed",
-        description: "Please try again.",
-        variant: "destructive",
-      });
-      setIsDownloading(false);
-    }
+      setDownloadState(null);
+      toast({ title: "Download unavailable", description: error instanceof Error ? error.message : "Please try again.", variant: "destructive" });
+    } finally { setIsDownloading(false); }
   };
 
   const handlePrevious = () => {
@@ -455,7 +362,7 @@ export default function WatchPage() {
           {/* Player Column */}
           <div className={`flex-1 ${isSeries ? "lg:pr-0" : ""}`}>
             {/* Video Container - Iframe Player */}
-            <div id="video-player" className="relative bg-black w-full scroll-mt-20 overflow-hidden" style={{ aspectRatio: "16 / 9" }}>
+            <div id="video-player" className="relative bg-foreground w-full scroll-mt-20 overflow-hidden" style={{ aspectRatio: "16 / 9" }}>
               {(() => {
                 const isAgent = movie && isMovieInAgentMode(movie);
                 const isAgentEpisode = isSeries && selectedEpisode?.isAgent;
@@ -474,14 +381,14 @@ export default function WatchPage() {
                           e.currentTarget.src = "/placeholder.svg";
                         }}
                       />
-                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm">
-                        <div className="w-16 h-16 lg:w-20 lg:h-20 rounded-full bg-orange-500/20 flex items-center justify-center mb-4">
-                          <Lock className="w-8 h-8 lg:w-10 lg:h-10 text-orange-500" />
+                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-foreground/60 backdrop-blur-sm">
+                        <div className="w-16 h-16 lg:w-20 lg:h-20 rounded-full bg-warning/20 flex items-center justify-center mb-4">
+                          <Lock className="w-8 h-8 lg:w-10 lg:h-10 text-warning" />
                         </div>
-                        <h3 className="text-white text-lg lg:text-xl font-bold mb-2">
+                        <h3 className="text-foreground text-lg lg:text-xl font-bold mb-2">
                           Agent Plan Required
                         </h3>
-                        <p className="text-white/70 text-sm text-center px-4 mb-4">
+                        <p className="text-foreground/70 text-sm text-center px-4 mb-4">
                           {isAgentEpisode
                             ? "This episode requires an Agent Plan (UGX 10,000) to access."
                             : "This is an Agent movie. Subscribe to Agent Plan (UGX 10,000) to access."}
@@ -502,14 +409,14 @@ export default function WatchPage() {
                           e.currentTarget.src = "/placeholder.svg";
                         }}
                       />
-                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm">
+                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-foreground/60 backdrop-blur-sm">
                         <div className="w-16 h-16 lg:w-20 lg:h-20 rounded-full bg-primary/20 flex items-center justify-center mb-4">
                           <Lock className="w-8 h-8 lg:w-10 lg:h-10 text-primary" />
                         </div>
-                        <h3 className="text-white text-lg lg:text-xl font-bold mb-2">
+                        <h3 className="text-foreground text-lg lg:text-xl font-bold mb-2">
                           Subscription Required
                         </h3>
-                        <p className="text-white/70 text-sm text-center px-4 mb-4">
+                        <p className="text-foreground/70 text-sm text-center px-4 mb-4">
                           Subscribe to watch and download this content
                         </p>
                       </div>
@@ -529,14 +436,14 @@ export default function WatchPage() {
                       title={currentContent.title}
                     />
                     {/* Block Google Drive popout icon — solid overlay with logo */}
-                    <div className="absolute top-0 right-0 h-12 w-16 sm:h-14 sm:w-20 z-20 flex items-center justify-center bg-black pointer-events-auto">
+                    <div className="absolute top-0 right-0 h-12 w-16 sm:h-14 sm:w-20 z-20 flex items-center justify-center bg-foreground pointer-events-auto">
                       <img
                         src="/luo-ancient-logo.png"
                         alt="Luo Ancient"
                         className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover"
                       />
                     </div>
-                    <div className="absolute top-0 left-0 right-16 sm:right-20 h-8 sm:h-10 z-10 bg-black pointer-events-none" />
+                    <div className="absolute top-0 left-0 right-16 sm:right-20 h-8 sm:h-10 z-10 bg-foreground pointer-events-none" />
                   </div>
                 ) : (
                   <>
@@ -550,14 +457,14 @@ export default function WatchPage() {
                     />
                     {/* Play Button Overlay */}
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <button className="w-16 h-16 lg:w-20 lg:h-20 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center hover:bg-white/30 transition-colors">
-                        <Play className="w-8 h-8 lg:w-10 lg:h-10 text-white fill-white ml-1" />
+                      <button className="w-16 h-16 lg:w-20 lg:h-20 rounded-full bg-glass-strong/20 backdrop-blur-sm flex items-center justify-center hover:bg-glass-strong/30 transition-colors">
+                        <Play className="w-8 h-8 lg:w-10 lg:h-10 text-foreground fill-foreground ml-1" />
                       </button>
                     </div>
                     {/* Video Controls */}
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-3 lg:p-4">
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-foreground/90 to-transparent p-3 lg:p-4">
                       {/* Progress Bar */}
-                      <div className="h-1 bg-white/30 rounded-full mb-3 cursor-pointer">
+                      <div className="h-1 bg-glass-strong/30 rounded-full mb-3 cursor-pointer">
                         <div className="h-full w-[1%] bg-primary rounded-full relative">
                           <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-primary rounded-full opacity-0 group-hover:opacity-100" />
                         </div>
@@ -565,13 +472,13 @@ export default function WatchPage() {
                       {/* Controls Row */}
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <button className="text-white hover:text-primary transition-colors">
-                            <Play className="w-5 h-5 fill-white" />
+                          <button className="text-foreground hover:text-primary transition-colors">
+                            <Play className="w-5 h-5 fill-foreground" />
                           </button>
-                          <button className="text-white hover:text-primary transition-colors">
+                          <button className="text-foreground hover:text-primary transition-colors">
                             <Volume2 className="w-5 h-5" />
                           </button>
-                          <span className="text-white text-sm">
+                          <span className="text-foreground text-sm">
                             00:00 /{" "}
                             {isSeries
                               ? `${selectedEpisode?.duration || 0}m`
@@ -579,12 +486,12 @@ export default function WatchPage() {
                           </span>
                         </div>
                         <div className="flex items-center gap-3">
-                          <span className="text-white text-sm hidden sm:block">English</span>
-                          <span className="text-white text-sm hidden sm:block">480P</span>
-                          <button className="text-white hover:text-primary transition-colors">
+                          <span className="text-foreground text-sm hidden sm:block">English</span>
+                          <span className="text-foreground text-sm hidden sm:block">480P</span>
+                          <button className="text-foreground hover:text-primary transition-colors">
                             <Settings className="w-5 h-5" />
                           </button>
-                          <button className="text-white hover:text-primary transition-colors">
+                          <button className="text-foreground hover:text-primary transition-colors">
                             <Maximize className="w-5 h-5" />
                           </button>
                         </div>
@@ -722,7 +629,7 @@ export default function WatchPage() {
                   </h1>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
                     <div className="flex items-center gap-1">
-                      <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                      <Star className="w-4 h-4 text-warning fill-warning" />
                       <span className="text-foreground font-medium">{currentContent.rating}</span>
                     </div>
                     <span>|</span>
@@ -750,7 +657,7 @@ export default function WatchPage() {
                 </div>
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
-                    <Star className="w-8 h-8 text-yellow-500 fill-yellow-500" />
+                    <Star className="w-8 h-8 text-warning fill-warning" />
                     <span className="text-3xl font-bold">{currentContent.rating}</span>
                   </div>
                   <div className="text-sm">
@@ -863,15 +770,7 @@ export default function WatchPage() {
         agentOnly
       />
 
-      {/* In-site Download Frame */}
-      <DownloadFrameDialog
-        open={!!downloadFrame}
-        url={downloadFrame?.url || ""}
-        title={downloadFrame?.title || ""}
-        fallbackUrl={downloadFrame?.fallbackUrl}
-        fileId={downloadFrame?.fileId}
-        onClose={() => setDownloadFrame(null)}
-      />
+      <DownloadProgress state={downloadState} title={getDownloadFilename()} onClose={() => setDownloadState(null)} />
     </MainLayout>
   );
 }

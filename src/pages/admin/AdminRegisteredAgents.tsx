@@ -81,7 +81,7 @@ export default function AdminRegisteredAgents() {
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
-            <Shield className="w-5 h-5 text-orange-500" /> Registered Agents
+            <Shield className="w-5 h-5 text-warning" /> Registered Agents
           </h2>
           <p className="text-sm text-muted-foreground">
             {agents.length} agent{agents.length === 1 ? "" : "s"} registered
@@ -108,7 +108,7 @@ export default function AdminRegisteredAgents() {
       </div>
 
       {agents.length === 0 ? (
-        <Card className="bg-[#0d1f0d] border-orange-500/30">
+        <Card className="bg-glass-strong border-warning/30">
           <CardContent className="p-8 text-center text-muted-foreground">
             No agent registrations yet. Details appear here after a successful Agent Plan payment.
           </CardContent>
@@ -116,9 +116,9 @@ export default function AdminRegisteredAgents() {
       ) : (
         <div className="space-y-2">
           {agents.map((a) => (
-            <Card key={a.id} className="bg-[#0d1e36] border-orange-500/30">
+            <Card key={a.id} className="bg-glass-strong border-warning/30">
               <CardContent className="p-4 flex items-start gap-3">
-                <div className="w-9 h-9 rounded-full bg-orange-500/20 flex items-center justify-center text-orange-500 shrink-0">
+                <div className="w-9 h-9 rounded-full bg-warning/20 flex items-center justify-center text-warning shrink-0">
                   <Shield className="w-4 h-4" />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -137,7 +137,7 @@ export default function AdminRegisteredAgents() {
                     <p className="text-sm text-foreground mt-0.5 break-words">{a.details}</p>
                   )}
                   <div className="text-xs text-muted-foreground mt-1 flex flex-wrap gap-x-3">
-                    <span className="text-green-500">Payment successful</span>
+                    <span className="text-success">Payment successful</span>
                     {a.planName && <span>{a.planName}{a.amount ? ` · UGX ${a.amount.toLocaleString()}` : ""}</span>}
                     {a.orderId && <span className="font-mono">{a.orderId}</span>}
                     {a.confirmationCode && <span className="font-mono">{a.confirmationCode}</span>}

@@ -388,8 +388,8 @@ export function SubscriptionModal({ open, onOpenChange, agentOnly }: Subscriptio
   }
 
   const isAgent = agentOnly;
-  const accentClass = isAgent ? "text-orange-500" : "text-primary";
-  const bgAccentClass = isAgent ? "bg-orange-500" : "gradient-primary";
+  const accentClass = isAgent ? "text-warning" : "text-primary";
+  const bgAccentClass = isAgent ? "bg-warning" : "gradient-primary";
   const ringClass = isAgent ? "ring-orange-500" : "ring-yellow-500";
   const failedTitle = statusMessage.toLowerCase().includes("insufficient balance")
     ? "Insufficient Balance"
@@ -401,7 +401,7 @@ export function SubscriptionModal({ open, onOpenChange, agentOnly }: Subscriptio
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className={`${step === "checkout" ? "max-w-2xl h-[90vh] p-0 overflow-hidden flex flex-col" : "max-w-2xl max-h-[90vh] overflow-y-auto"} md:ring-2 md:${ringClass} rounded-xl max-md:w-[calc(100vw-0.5rem)] max-md:max-w-[calc(100vw-0.5rem)] max-md:border-[3px] max-md:border-transparent max-md:[background:linear-gradient(var(--background),var(--background))_padding-box,conic-gradient(from_0deg,#ff0000,#ff7f00,#ffff00,#00ff00,#00ffff,#0000ff,#8b00ff,#ff0000)_border-box]`}>
+      <DialogContent className={step === "checkout" ? "max-w-2xl h-[90dvh] p-0 overflow-hidden flex flex-col" : "max-w-2xl max-h-[90dvh] overflow-y-auto"}>
         {/* PLAN SELECTION */}
         {step === "plans" && !isAgent && (
           <>
@@ -420,12 +420,12 @@ export function SubscriptionModal({ open, onOpenChange, agentOnly }: Subscriptio
               {plans.map((plan) => {
                 const Icon = plan.icon;
                 return (
-                  <button key={plan.duration} onClick={() => handlePlanSelect(plan)} className="relative flex flex-col items-center p-4 rounded-xl border border-border hover:border-primary/50 transition-all hover:scale-105 max-md:border-[2px] max-md:border-transparent max-md:[background:linear-gradient(var(--background),var(--background))_padding-box,conic-gradient(from_0deg,#ff0000,#ff7f00,#ffff00,#00ff00,#00ffff,#0000ff,#8b00ff,#ff0000)_border-box]">
+                  <Button variant="outline" key={plan.duration} onClick={() => handlePlanSelect(plan)} className="relative h-auto flex-col p-4 whitespace-normal">
                     {plan.popular && <span className="absolute -top-1.5 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-[7px] font-bold px-1.5 py-px rounded-full leading-tight">POPULAR</span>}
                     <Icon className="w-6 h-6 mb-2 text-primary" />
                     <span className="text-xs text-muted-foreground">{plan.duration}</span>
                     <span className="text-lg font-bold mt-1">UGX {plan.priceDisplay}</span>
-                  </button>
+                  </Button>
                 );
               })}
             </div>
@@ -441,24 +441,24 @@ export function SubscriptionModal({ open, onOpenChange, agentOnly }: Subscriptio
               <DialogDescription className="text-center">Subscribe to unlock ALL movies on the website including exclusive Agent movies for 3 days</DialogDescription>
             </DialogHeader>
             <div className="py-6 flex flex-col items-center gap-4">
-              <div className="w-16 h-16 rounded-full bg-orange-500/20 flex items-center justify-center">
-                <Shield className="w-8 h-8 text-orange-500" />
+              <div className="w-16 h-16 rounded-full bg-warning/20 flex items-center justify-center">
+                <Shield className="w-8 h-8 text-warning" />
               </div>
               <ul className="text-sm space-y-2 text-left w-full max-w-xs">
-                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-orange-500" /> Access ALL movies on the website</li>
-                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-orange-500" /> Access exclusive Agent movies</li>
-                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-orange-500" /> HD quality streaming</li>
+                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-warning" /> Access ALL movies on the website</li>
+                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-warning" /> Access exclusive Agent movies</li>
+                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-warning" /> HD quality streaming</li>
               </ul>
               {agentPlans.length === 0 && <p className="text-sm text-muted-foreground">Loading plans...</p>}
               {agentPlans.map((ap) => (
                 <button
                   key={ap.id}
                   onClick={() => handlePlanSelect({ duration: ap.name, price: ap.price, priceDisplay: ap.price.toLocaleString("en-US"), icon: Shield })}
-                  className="w-full rounded-lg border border-orange-500/50 p-4 text-left hover:bg-orange-500/10 transition"
+                  className="w-full rounded-lg border border-warning/50 p-4 text-left hover:bg-warning/10 transition"
                 >
                   <div className="flex items-center justify-between">
                     <span className="font-semibold">{ap.name}</span>
-                    <span className="font-bold text-orange-500">UGX {ap.price.toLocaleString("en-US")}</span>
+                    <span className="font-bold text-warning">UGX {ap.price.toLocaleString("en-US")}</span>
                   </div>
                   <p className="text-xs text-muted-foreground mt-1">
                     {ap.description || (ap.days === -1 ? "Lifetime access" : `${ap.days} days access`)}
@@ -484,7 +484,7 @@ export function SubscriptionModal({ open, onOpenChange, agentOnly }: Subscriptio
               <Input type="text" placeholder="Name of Business (e.g. Doe Movies Shop)" value={agentBusiness} onChange={(e) => setAgentBusiness(e.target.value)} className="h-14" />
               <Input type="text" placeholder="Your Location (e.g. Kampala, Wandegeya)" value={agentLocation} onChange={(e) => setAgentLocation(e.target.value)} className="h-14" />
               <p className="text-xs text-muted-foreground">Details are saved only after a successful payment.</p>
-              <Button onClick={() => setStep("phone")} className="w-full bg-orange-500 hover:bg-orange-600 text-black font-semibold" size="lg">
+              <Button onClick={() => setStep("phone")} className="w-full bg-warning hover:bg-warning text-foreground font-semibold" size="lg">
                 Continue to Payment
               </Button>
             </div>
@@ -504,7 +504,7 @@ export function SubscriptionModal({ open, onOpenChange, agentOnly }: Subscriptio
             <div className="py-4 space-y-4">
               <div className="bg-accent rounded-lg p-4 text-center">
                 <p className="text-sm text-muted-foreground">{isAgent ? "Agent Plan" : `${selectedPlan.duration} Plan`}</p>
-                <p className={`text-2xl font-bold ${isAgent ? "text-blue-500" : accentClass}`}>UGX {selectedPlan.priceDisplay}</p>
+                <p className={`text-2xl font-bold ${isAgent ? "text-primary" : accentClass}`}>UGX {selectedPlan.priceDisplay}</p>
               </div>
               <div>
                 <label className="text-sm font-medium">Payment Method</label>
@@ -512,14 +512,14 @@ export function SubscriptionModal({ open, onOpenChange, agentOnly }: Subscriptio
                   <button
                     type="button"
                     onClick={() => setPaymentMethod("mobile")}
-                    className={`rounded-lg border-2 px-3 py-2 text-sm font-semibold transition-colors ${paymentMethod === "mobile" ? (isAgent ? "border-orange-500 bg-orange-500/10 text-white" : "border-primary bg-primary/10 text-white") : "border-border text-white/70 hover:border-primary/50 hover:text-white"}`}
+                    className={`rounded-lg border-2 px-3 py-2 text-sm font-semibold transition-colors ${paymentMethod === "mobile" ? (isAgent ? "border-warning bg-warning/10 text-foreground" : "border-primary bg-primary/10 text-foreground") : "border-border text-foreground/70 hover:border-primary/50 hover:text-foreground"}`}
                   >
                     Mobile Money
                   </button>
                   <button
                     type="button"
                     onClick={() => setPaymentMethod("card")}
-                    className={`rounded-lg border-2 px-3 py-2 text-sm font-semibold transition-colors ${paymentMethod === "card" ? (isAgent ? "border-orange-500 bg-orange-500/10 text-white" : "border-primary bg-primary/10 text-white") : "border-border text-white/70 hover:border-primary/50 hover:text-white"}`}
+                    className={`rounded-lg border-2 px-3 py-2 text-sm font-semibold transition-colors ${paymentMethod === "card" ? (isAgent ? "border-warning bg-warning/10 text-foreground" : "border-primary bg-primary/10 text-foreground") : "border-border text-foreground/70 hover:border-primary/50 hover:text-foreground"}`}
                   >
                     Card
                   </button>
@@ -535,7 +535,7 @@ export function SubscriptionModal({ open, onOpenChange, agentOnly }: Subscriptio
               {paymentMethod === "card" && (
                 <p className="text-xs text-muted-foreground">You will enter your card details securely on the Pesapal checkout page.</p>
               )}
-              <Button onClick={handlePayment} className={`w-full ${isAgent ? "bg-red-600 hover:bg-red-700 text-white font-semibold" : "gradient-primary"}`} size="lg">
+              <Button onClick={handlePayment} className={`w-full ${isAgent ? "bg-destructive hover:bg-destructive text-foreground font-semibold" : "gradient-primary"}`} size="lg">
                 Pay UGX {selectedPlan.priceDisplay}
               </Button>
             </div>
@@ -578,10 +578,10 @@ export function SubscriptionModal({ open, onOpenChange, agentOnly }: Subscriptio
         {step === "success" && (
           <div className="py-8 text-center space-y-4">
             <DialogHeader className="sr-only"><DialogTitle>Success</DialogTitle><DialogDescription>Payment successful</DialogDescription></DialogHeader>
-            <div className="w-20 h-20 rounded-full bg-green-500/20 mx-auto flex items-center justify-center">
-              <CheckCircle className="w-10 h-10 text-green-500" />
+            <div className="w-20 h-20 rounded-full bg-success/20 mx-auto flex items-center justify-center">
+              <CheckCircle className="w-10 h-10 text-success" />
             </div>
-            <h3 className="text-2xl font-bold text-green-500">Payment Successful!</h3>
+            <h3 className="text-2xl font-bold text-success">Payment Successful!</h3>
             <p className="text-muted-foreground">{statusMessage}</p>
             {confirmationCode && (
               <p className="text-sm text-muted-foreground">Confirmation: <span className="font-mono">{confirmationCode}</span></p>
@@ -610,10 +610,10 @@ export function SubscriptionModal({ open, onOpenChange, agentOnly }: Subscriptio
         {step === "pending" && (
           <div className="py-8 text-center space-y-4">
             <DialogHeader className="sr-only"><DialogTitle>Pending</DialogTitle><DialogDescription>Payment pending</DialogDescription></DialogHeader>
-            <div className="w-20 h-20 rounded-full bg-yellow-500/20 mx-auto flex items-center justify-center">
-              <AlertCircle className="w-10 h-10 text-yellow-500" />
+            <div className="w-20 h-20 rounded-full bg-warning/20 mx-auto flex items-center justify-center">
+              <AlertCircle className="w-10 h-10 text-warning" />
             </div>
-            <h3 className="text-2xl font-bold text-yellow-500">Payment Processing</h3>
+            <h3 className="text-2xl font-bold text-warning">Payment Processing</h3>
             <p className="text-muted-foreground">{statusMessage}</p>
             <div className="flex flex-col gap-2">
               <Button onClick={() => { if (orderTrackingId && orderId && selectedPlan) { setStep("checkout"); startPolling(orderTrackingId, orderId, selectedPlan); }}} className="w-full">Check Again</Button>

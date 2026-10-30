@@ -165,7 +165,7 @@ export default function AdvertsPage() {
 
             <div
               ref={wrapperRef}
-              className="w-full aspect-video max-h-[80vh] relative select-none bg-black"
+              className="w-full aspect-video max-h-[80vh] relative select-none bg-foreground"
               onMouseMove={ytId ? handleMouseMove : undefined}
               onMouseLeave={() => ytId && setShowControls(false)}
             >
@@ -179,36 +179,36 @@ export default function AdvertsPage() {
                   {/* Center play/pause indicator */}
                   {showControls && (
                     <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
-                      <div className="bg-black/40 rounded-full p-4 backdrop-blur-sm">
-                        {isPlaying ? <Pause className="w-10 h-10 text-white" /> : <Play className="w-10 h-10 text-white fill-white" />}
+                      <div className="bg-foreground/40 rounded-full p-4 backdrop-blur-sm">
+                        {isPlaying ? <Pause className="w-10 h-10 text-foreground" /> : <Play className="w-10 h-10 text-foreground fill-foreground" />}
                       </div>
                     </div>
                   )}
 
                   {/* Bottom controls */}
-                  <div className={`absolute bottom-0 left-0 right-0 z-20 bg-gradient-to-t from-black/80 to-transparent px-4 pb-3 pt-8 transition-opacity duration-300 ${showControls ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
-                    <div className="w-full h-1.5 bg-white/30 rounded-full cursor-pointer mb-3 group hover:h-2.5 transition-all" onClick={handleSeekClick}>
+                  <div className={`absolute bottom-0 left-0 right-0 z-20 bg-gradient-to-t from-foreground/80 to-transparent px-4 pb-3 pt-8 transition-opacity duration-300 ${showControls ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
+                    <div className="w-full h-1.5 bg-glass-strong/30 rounded-full cursor-pointer mb-3 group hover:h-2.5 transition-all" onClick={handleSeekClick}>
                       <div className="h-full bg-primary rounded-full relative" style={{ width: `${progress}%` }}>
                         <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3.5 h-3.5 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
                       </div>
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <button onClick={togglePlay} className="text-white hover:text-primary transition-colors">
-                          {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 fill-white" />}
+                        <button onClick={togglePlay} className="text-foreground hover:text-primary transition-colors">
+                          {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 fill-foreground" />}
                         </button>
-                        <button onClick={() => skip(-10)} className="text-white hover:text-primary transition-colors">
+                        <button onClick={() => skip(-10)} className="text-foreground hover:text-primary transition-colors">
                           <SkipBack className="w-5 h-5" />
                         </button>
-                        <button onClick={() => skip(10)} className="text-white hover:text-primary transition-colors">
+                        <button onClick={() => skip(10)} className="text-foreground hover:text-primary transition-colors">
                           <SkipForward className="w-5 h-5" />
                         </button>
-                        <button onClick={toggleMute} className="text-white hover:text-primary transition-colors">
+                        <button onClick={toggleMute} className="text-foreground hover:text-primary transition-colors">
                           {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
                         </button>
-                        <span className="text-white text-xs font-mono">{formatTime(currentTime)} / {formatTime(duration)}</span>
+                        <span className="text-foreground text-xs font-mono">{formatTime(currentTime)} / {formatTime(duration)}</span>
                       </div>
-                      <button onClick={handleFullscreen} className="text-white hover:text-primary transition-colors">
+                      <button onClick={handleFullscreen} className="text-foreground hover:text-primary transition-colors">
                         <Maximize className="w-5 h-5" />
                       </button>
                     </div>
@@ -251,10 +251,10 @@ export default function AdvertsPage() {
               >
                 <div className="aspect-video overflow-hidden relative">
                   <img src={advert.imageUrl} alt={advert.title} className="w-full h-full object-cover transition-transform group-hover:scale-105" onError={(e) => { e.currentTarget.src = "/placeholder.svg"; }} />
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
+                  <div className="absolute inset-0 flex items-center justify-center bg-foreground/30 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
                     <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-primary/90 lg:bg-transparent lg:px-0 lg:py-0">
-                      <Play className="w-5 h-5 lg:w-12 lg:h-12 text-white fill-white" />
-                      <span className="text-white text-sm font-semibold lg:hidden">Play Now</span>
+                      <Play className="w-5 h-5 lg:w-12 lg:h-12 text-foreground fill-foreground" />
+                      <span className="text-foreground text-sm font-semibold lg:hidden">Play Now</span>
                     </div>
                   </div>
                 </div>

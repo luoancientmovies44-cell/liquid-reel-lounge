@@ -77,7 +77,7 @@ export default function AppsPage() {
                     <p className="text-xs text-muted-foreground">{app.category}</p>
                     <div className="flex items-center gap-2 mt-1">
                       <div className="flex items-center gap-1">
-                        <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
+                        <Star className="w-3 h-3 text-warning fill-warning" />
                         <span className="text-xs">{app.rating}</span>
                       </div>
                       <span className="text-xs text-muted-foreground">•</span>

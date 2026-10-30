@@ -93,9 +93,9 @@ export default function AdminTransactions() {
   };
 
   const StatusBadge = ({ status }: { status: string }) => {
-    if (status === "success") return <span className="flex items-center gap-1 text-green-500"><CheckCircle className="w-4 h-4" /> Success</span>;
-    if (status === "failed") return <span className="flex items-center gap-1 text-red-500"><XCircle className="w-4 h-4" /> Failed</span>;
-    return <span className="flex items-center gap-1 text-yellow-500"><Clock className="w-4 h-4" /> Pending</span>;
+    if (status === "success") return <span className="flex items-center gap-1 text-success"><CheckCircle className="w-4 h-4" /> Success</span>;
+    if (status === "failed") return <span className="flex items-center gap-1 text-destructive"><XCircle className="w-4 h-4" /> Failed</span>;
+    return <span className="flex items-center gap-1 text-warning"><Clock className="w-4 h-4" /> Pending</span>;
   };
 
   if (loading) {
@@ -128,7 +128,7 @@ export default function AdminTransactions() {
       </div>
 
       {transactions.length === 0 ? (
-        <Card className="bg-[#0d1e36] border-border/50">
+        <Card className="glass border-border/50">
           <CardContent className="p-12 text-center text-muted-foreground">
             No transactions yet
           </CardContent>
@@ -155,7 +155,7 @@ export default function AdminTransactions() {
             </thead>
             <tbody>
               {transactions.map((tx) => (
-                <tr key={tx.id} className={`border-b border-border/30 hover:bg-white/5 ${selectedIds.has(tx.id!) ? "bg-primary/5" : ""}`}>
+                <tr key={tx.id} className={`border-b border-border/30 hover:bg-glass-strong/5 ${selectedIds.has(tx.id!) ? "bg-primary/5" : ""}`}>
                   <td className="py-3 px-4">
                     <Checkbox
                       checked={selectedIds.has(tx.id!)}

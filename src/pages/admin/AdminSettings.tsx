@@ -111,9 +111,9 @@ export default function AdminSettings() {
         </CardContent>
       </Card>
 
-      <Card className="max-w-lg border-orange-500/50">
+      <Card className="max-w-lg border-warning/50">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-orange-500">
+          <CardTitle className="flex items-center gap-2 text-warning">
             <AlertCircle className="w-5 h-5" />
             Important Note
           </CardTitle>

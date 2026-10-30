@@ -80,7 +80,7 @@ export default function AdminActivities() {
               placeholder="Search activities..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-9 w-64 bg-[#0d1e36] border-border/50"
+              className="pl-9 w-64 glass border-border/50"
             />
           </div>
           <Button
@@ -111,7 +111,7 @@ export default function AdminActivities() {
 
       <div className="space-y-2">
         {filtered.length === 0 && !loading && (
-          <Card className="bg-[#0d1e36] border-border/50">
+          <Card className="glass border-border/50">
             <CardContent className="p-8 text-center text-muted-foreground">
               No activities recorded yet.
             </CardContent>
@@ -120,7 +120,7 @@ export default function AdminActivities() {
         {filtered.map((a) => (
           <Card
             key={a.id}
-            className="bg-[#0d1e36] border-border/50 hover:border-primary/30 transition-colors"
+            className="glass border-border/50 hover:border-primary/30 transition-colors"
           >
             <CardContent className="p-4 flex items-start gap-4">
               <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-primary shrink-0 mt-0.5">

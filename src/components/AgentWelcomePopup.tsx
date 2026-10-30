@@ -6,7 +6,7 @@ export function AgentWelcomePopup({
   lines = ["BE AMONG", "AGENT OF THE WEEK"],
 }: Props) {
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 pointer-events-none px-4 neon-popup-fade">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-foreground/50 pointer-events-none px-4 neon-popup-fade">
       <svg
         viewBox="0 0 2600 480"
         className="w-full max-w-6xl h-auto neon-hue-cycle"

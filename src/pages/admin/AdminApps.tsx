@@ -302,7 +302,7 @@ export default function AdminApps() {
                     <TableCell>{app.version}</TableCell>
                     <TableCell>{app.downloads.toLocaleString()}</TableCell>
                     <TableCell>
-                      {app.isActive ? <span className="text-green-500">Yes</span> : <span className="text-muted-foreground">No</span>}
+                      {app.isActive ? <span className="text-success">Yes</span> : <span className="text-muted-foreground">No</span>}
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">

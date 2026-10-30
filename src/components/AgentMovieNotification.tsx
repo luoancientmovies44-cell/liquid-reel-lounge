@@ -70,7 +70,7 @@ export function AgentMovieNotification({ inline = false }: { inline?: boolean })
     >
 
 
-      <div className="relative bg-background border-2 border-orange-500/60 rounded-xl shadow-lg shadow-orange-500/10 p-4">
+      <div className="relative bg-background border-2 border-warning/60 rounded-xl shadow-lg shadow-orange-500/10 p-4">
         <button
           onClick={() => setVisible(false)}
           className="absolute top-2 right-2 p-1 rounded-full hover:bg-muted transition-colors"
@@ -79,8 +79,8 @@ export function AgentMovieNotification({ inline = false }: { inline?: boolean })
         </button>
 
         <div className="flex items-start gap-3">
-          <div className="w-10 h-10 rounded-full bg-orange-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-            <Shield className="w-5 h-5 text-orange-500" />
+          <div className="w-10 h-10 rounded-full bg-warning/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+            <Shield className="w-5 h-5 text-warning" />
           </div>
           <div className="flex-1 min-w-0">
             <p className="font-semibold text-sm">🔥 New Agent Movies Available!</p>
@@ -89,7 +89,7 @@ export function AgentMovieNotification({ inline = false }: { inline?: boolean })
             </p>
             <button
               onClick={handleGoToAgent}
-              className="mt-2 flex items-center gap-1 text-xs font-medium text-orange-500 hover:text-orange-400 transition-colors"
+              className="mt-2 flex items-center gap-1 text-xs font-medium text-warning hover:text-warning transition-colors"
             >
               Go to Agent Page <ChevronRight className="w-3 h-3" />
             </button>

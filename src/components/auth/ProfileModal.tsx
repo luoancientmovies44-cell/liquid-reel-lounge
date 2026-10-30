@@ -106,8 +106,8 @@ export function ProfileModal({ open, onOpenChange }: ProfileModalProps) {
               <h2 className="text-xl font-bold">{user.name}</h2>
               <p className="text-sm text-muted-foreground">{user.email}</p>
               <div className="flex items-center gap-1 mt-1">
-                {user.plan && <Crown className="w-4 h-4 text-yellow-500" />}
-                <span className={`text-sm font-medium ${planInfo.status === "active" ? "text-green-500" : "text-red-500"}`}>
+                {user.plan && <Crown className="w-4 h-4 text-warning" />}
+                <span className={`text-sm font-medium ${planInfo.status === "active" ? "text-success" : "text-destructive"}`}>
                   {planInfo.name}
                 </span>
               </div>
@@ -168,10 +168,10 @@ export function ProfileModal({ open, onOpenChange }: ProfileModalProps) {
 
           {/* Subscription Tab */}
           <TabsContent value="subscription" className="space-y-4 mt-0">
-            <div className={`p-4 rounded-lg border ${planInfo.status === "active" ? "border-green-500/30 bg-green-500/5" : "border-red-500/30 bg-red-500/5"}`}>
+            <div className={`p-4 rounded-lg border ${planInfo.status === "active" ? "border-success/30 bg-success/5" : "border-destructive/30 bg-destructive/5"}`}>
               <div className="flex items-center justify-between mb-2">
                 <span className="font-semibold">{planInfo.name}</span>
-                <span className={`text-xs px-2 py-0.5 rounded-full ${planInfo.status === "active" ? "bg-green-500/20 text-green-500" : "bg-red-500/20 text-red-500"}`}>
+                <span className={`text-xs px-2 py-0.5 rounded-full ${planInfo.status === "active" ? "bg-success/20 text-success" : "bg-destructive/20 text-destructive"}`}>
                   {planInfo.status === "active" ? "Active" : "Expired"}
                 </span>
               </div>
@@ -182,7 +182,7 @@ export function ProfileModal({ open, onOpenChange }: ProfileModalProps) {
                     <p>{planInfo.daysLeft} days remaining</p>
                   )}
                   {planInfo.name === "Lifetime" && (
-                    <p className="text-green-500 flex items-center gap-1">
+                    <p className="text-success flex items-center gap-1">
                       <Check className="w-4 h-4" /> Never expires
                     </p>
                   )}
@@ -194,19 +194,19 @@ export function ProfileModal({ open, onOpenChange }: ProfileModalProps) {
               <h4 className="font-medium text-sm">Plan Benefits</h4>
               <ul className="text-sm text-muted-foreground space-y-1.5">
                 <li className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-green-500" />
+                  <Check className="w-4 h-4 text-success" />
                   Unlimited streaming
                 </li>
                 <li className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-green-500" />
+                  <Check className="w-4 h-4 text-success" />
                   HD quality video
                 </li>
                 <li className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-green-500" />
+                  <Check className="w-4 h-4 text-success" />
                   Download for offline
                 </li>
                 <li className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-green-500" />
+                  <Check className="w-4 h-4 text-success" />
                   No ads
                 </li>
               </ul>
