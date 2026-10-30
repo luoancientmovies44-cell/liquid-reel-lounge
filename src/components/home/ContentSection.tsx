@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { LayoutGrid, ChevronDown } from "lucide-react";
 import { SlingshotTitle } from "@/components/home/SlingshotTitle";
+import { Button } from "@/components/ui/button";
 
 const GENRES = [
   "Indian", "Action", "Sci-Fi", "Nigerian", "Horror", "Animation",
@@ -50,12 +51,14 @@ export function ContentSection({ title, category = "trending", showGenres = fals
       </h2>
       {showGenres && (
         <DropdownMenu>
-          <DropdownMenuTrigger className="inline-flex items-center gap-1 text-xl lg:text-2xl font-bold text-foreground hover:text-primary transition-colors">
+          <DropdownMenuTrigger asChild>
+          <Button variant="outline" className="gap-1">
             <LayoutGrid className="w-5 h-5 lg:w-6 lg:h-6" />
             <span>Genres</span>
             <ChevronDown className="w-5 h-5 lg:w-6 lg:h-6" />
+          </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="max-h-80 overflow-y-auto rounded-2xl border-border/60 p-2 bg-[linear-gradient(135deg,#1a0f08_0%,#3a1f10_50%,#0a0604_100%)] backdrop-blur-md shadow-xl">
+          <DropdownMenuContent align="start" className="glass-strong max-h-80 overflow-y-auto rounded-2xl border-border p-2">
             {GENRES.map((genre) => (
               <DropdownMenuItem key={genre} asChild className="rounded-xl my-0.5 font-bold text-foreground focus:bg-glass-strong/10 focus:text-foreground">
                 <Link to={genre === "Luo Champion" ? "/luo-champion" : `/genres/${genre.toLowerCase()}`} className="font-bold text-foreground hover:text-foreground">{genre}</Link>
@@ -71,7 +74,7 @@ export function ContentSection({ title, category = "trending", showGenres = fals
     return (
       <section>
         {renderHeader()}
-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-6 2xl:grid-cols-7 gap-2 lg:gap-3">
+        <div className="library-grid">
           {[...Array(6)].map((_, i) => (
             <div key={i} className="space-y-2">
               <Skeleton className="aspect-[2/3] rounded-lg" />
