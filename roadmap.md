@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Match mobile Agent and all Download App colors to Greeting, stop mobile Agent animation, and place matching numbered movie parts in ascending order; test ordering and verify real catalogue/buttons.
+- [x] Match mobile Agent and all Download App colors to Greeting, stop mobile Agent animation, and place matching numbered movie parts in ascending order; 10 tests passed, real Paradise parts verified first-to-last, Greeting and Agent actions passed, desktop/mobile colors matched and build OK.
 
 - [x] Restore the original catalogue ordering, responsive poster columns and aligned title/episode rows while preserving liquid glass and deferred card mounting; real catalogue checked at five screen sizes, movie selection passed, five existing tests passed and build OK.
 
