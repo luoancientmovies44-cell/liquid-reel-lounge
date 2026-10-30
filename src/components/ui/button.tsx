@@ -11,6 +11,7 @@ const buttonVariants = cva(
       variant: {
         default: "gradient-primary text-primary-foreground hover:opacity-90",
         success: "bg-success text-primary-foreground hover:opacity-90",
+        greeting: "bg-warning text-foreground hover:bg-warning/90",
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline: "glass border border-input text-foreground hover:bg-glass-strong",
         secondary: "glass text-secondary-foreground hover:bg-glass-strong",
