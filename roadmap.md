@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Reduce duplicate Firebase content reads and unblock hero slides; verify real homepage loading and repeat navigation.
+
 - [x] Restore full-width desktop layout with the original sidebar and homepage hero slides plus all six original sections in liquid glass; desktop width, slide selection, sidebar navigation, login and phone overflow checks passed.
 
 - [ ] Apply the supplied light liquid-glass design across library, shared controls, forms and admin while preserving real content and existing subscription rules.

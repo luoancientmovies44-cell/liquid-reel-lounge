@@ -34,22 +34,30 @@ export function HeroBanner() {
   const [displayIndex, setDisplayIndex] = useState(0);
 
   useEffect(() => {
-    async function fetchSlides() {
-      try {
-        const [content, heroImages] = await Promise.all([
-          getFeaturedContent(10),
-          getHeroImages(),
-        ]);
-        const contentSlides: SlideItem[] = content.map((c) => ({ kind: "content", data: c }));
-        const heroSlides: SlideItem[] = heroImages.map((h) => ({ kind: "hero", data: h }));
-        setSlides([...heroSlides, ...contentSlides]);
-      } catch (error) {
-        console.error("Error fetching slides:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchSlides();
+    let alive = true;
+    let heroSlides: SlideItem[] = [];
+    let contentSlides: SlideItem[] = [];
+    let completed = 0;
+    const publish = () => {
+      if (!alive) return;
+      const next = [...heroSlides, ...contentSlides];
+      setSlides(next);
+      if (next.length > 0 || completed === 2) setLoading(false);
+    };
+    // Saved banners can appear without waiting for the full episode catalogue.
+    void getHeroImages().then(images => {
+      heroSlides = images.map(data => ({ kind: "hero", data }));
+    }).catch(error => console.error("Error fetching hero images:", error)).finally(() => {
+      completed += 1;
+      publish();
+    });
+    void getFeaturedContent(10).then(content => {
+      contentSlides = content.map(data => ({ kind: "content", data }));
+    }).catch(error => console.error("Error fetching featured content:", error)).finally(() => {
+      completed += 1;
+      publish();
+    });
+    return () => { alive = false; };
   }, []);
 
   const transitionTo = useCallback((nextIndex: number) => {
