@@ -1,5 +1,9 @@
 # Roadmap
 
+- [ ] Apply the supplied light liquid-glass design across library, shared controls, forms and admin while preserving real content and existing subscription rules.
+- [ ] Add centred movie/series selection with Watch and Download, and honest same-page download initiation feedback; verify supported streaming providers and report unsupported Drive permissions.
+- [ ] Verify phone layouts, central watch/download flows and relevant regression tests; report real-account limitations.
+
 - [x] Remove direct file uploads from all admin forms; retain URL/Drive link inputs only. Shared fields and separate Hero Slides upload removed; build passed and 11 existing regression tests passed. Signed-in save/read-back remains unverified without a Firebase admin session.
 
 - [x] Start directly uploaded video downloads without a dialog; browser attachment fixture, streaming tests and desktop/mobile Drive regression checks passed.
