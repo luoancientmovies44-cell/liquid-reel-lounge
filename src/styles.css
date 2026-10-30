@@ -80,6 +80,7 @@
   --blob-4: oklch(0.88 0.1 70);
   --gradient-primary: linear-gradient(135deg, oklch(0.6 0.17 235), oklch(0.62 0.16 290));
   --brand-gradient: linear-gradient(100deg, oklch(0.72 0.17 240), oklch(0.55 0.25 285), oklch(0.62 0.27 330));
+  --shadow-brand: 0 2px 2px oklch(0.35 0.08 260 / 24%);
   --shadow-glass: 0 1px 0 0 oklch(1 0 0 / 90%) inset, 0 20px 40px -20px oklch(0.4 0.08 260 / 35%);
   --shadow-float: 0 30px 80px -20px oklch(0.35 0.1 260 / 45%);
 
@@ -427,6 +428,7 @@ h1,h2,h3,h4 { font-family: "Sora", system-ui, sans-serif; }
 .glass { background: var(--glass); backdrop-filter: blur(24px) saturate(170%); border: 1px solid var(--glass-edge); box-shadow: var(--shadow-glass); }
 .glass-strong { background: var(--glass-strong); backdrop-filter: blur(36px) saturate(180%); border: 1px solid var(--glass-edge); box-shadow: var(--shadow-float); }
 .brand-title { font-family: "Baloo 2", "Fredoka", sans-serif; font-weight: 800; background-image: var(--brand-gradient); background-clip: text; -webkit-background-clip: text; color: transparent; line-height: 1.05; font-size: 20px; }
+.sidebar-brand-title { font-size: 18px; line-height: 1.15; filter: drop-shadow(var(--shadow-brand)); }
 .brand-heading { font-size: 30.4px; }
 .avatar-ring { background-image: var(--brand-gradient); padding: 2.5px; border-radius: 50%; }
 .library-shell { width: 100%; max-width: 768px; margin-inline: auto; padding-inline: 12px; padding-bottom: 80px; }
