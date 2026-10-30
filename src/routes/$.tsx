@@ -15,7 +15,7 @@ export const Route = createFileRoute("/$")({
 
 function Page() {
   return (
-    <ClientOnly fallback={<div style={{ minHeight: "100vh", background: "hsl(240 10% 4%)" }} />}>
+    <ClientOnly fallback={<div className="min-h-screen bg-background" />}>
       <App />
     </ClientOnly>
   );
