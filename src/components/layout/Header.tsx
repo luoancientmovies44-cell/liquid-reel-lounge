@@ -59,7 +59,7 @@ export function Header() {
         <div className="flex items-center justify-between gap-2">
           <Link to="/" className="flex min-w-0 items-center gap-2">
             <img src={luoAncientLogo} alt="Luo Ancient" className="h-9 w-9 shrink-0 rounded-full object-contain" />
-            <h1 className="brand-title">LUO ANCIENT AGENT</h1>
+            <h1 className="brand-title">LUO ANCIENT MOVIES</h1>
           </Link>
           <div className="flex shrink-0 items-center gap-2">
             {isAdmin && <Button variant="outline" size="icon" aria-label="Admin dashboard" onClick={() => navigate("/admin")}><Shield /></Button>}
