@@ -12,14 +12,14 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useAdmin } from "@/contexts/AdminContext";
 import { User, Crown, LogOut, Shield } from "lucide-react";
 import { ProfileModal } from "./ProfileModal";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { Button } from "@/components/ui/button";
 
 export function ProfileDropdown() {
   const { user, logout } = useAuth();
   const { isAdmin } = useAdmin();
   const navigate = useNavigate();
   const [profileOpen, setProfileOpen] = useState(false);
-  const isMobile = useIsMobile();
+
 
   if (!user) return null;
 
@@ -44,52 +44,22 @@ export function ProfileDropdown() {
   };
 
 
-  // Mobile: Direct click to open profile modal
-  if (isMobile) {
-    return (
-      <>
-        <button 
-          onClick={() => setProfileOpen(true)}
-          className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-          aria-label="Open profile"
-        >
-          <Avatar className="w-8 h-8 border-2 border-primary/50">
-            <AvatarImage src={user.avatar} alt={user.name} />
-            <AvatarFallback className="bg-primary/20 text-primary text-xs font-semibold">
-              {initials}
-            </AvatarFallback>
-          </Avatar>
-        </button>
-        <ProfileModal open={profileOpen} onOpenChange={setProfileOpen} />
-      </>
-    );
-  }
-
   // Desktop: Dropdown menu
   return (
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <button className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <Avatar className="w-8 h-8 border-2 border-primary/50">
+          <Button variant="ghost" size="icon" className="avatar-ring h-10 w-10" aria-label="Open account menu">
+            <Avatar className="h-full w-full">
               <AvatarImage src={user.avatar} alt={user.name} />
-              <AvatarFallback className="bg-primary/20 text-primary text-xs font-semibold">
-                {initials}
-              </AvatarFallback>
+              <AvatarFallback className="bg-glass-strong text-primary">{initials || user.email.charAt(0).toUpperCase()}</AvatarFallback>
             </Avatar>
-            <div className="flex flex-col items-start">
-              <span className="text-sm font-medium leading-none">{user.name.split(" ")[0]}</span>
-              <span className="text-xs text-muted-foreground flex items-center gap-1">
-                {user.plan && <Crown className="w-3 h-3 text-yellow-500" />}
-                {getPlanDisplay()}
-              </span>
-            </div>
-          </button>
+          </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-56">
+        <DropdownMenuContent align="end" className="glass-strong w-72 max-w-[calc(100vw-24px)] rounded-2xl p-3">
           <div className="px-2 py-1.5">
             <p className="text-sm font-medium">{user.name}</p>
-            <p className="text-xs text-muted-foreground">{user.email}</p>
+            <p className="text-xs text-muted-foreground break-all">{user.email}</p>
           </div>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => setProfileOpen(true)} className="cursor-pointer">
