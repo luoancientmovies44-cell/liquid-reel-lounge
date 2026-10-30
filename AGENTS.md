@@ -21,3 +21,4 @@
 - Mux playback handles direct media only inside existing subscription gates; Google Drive embeds remain unchanged. Public R2 URLs are not DRM or server-protected playback.
 - Direct video downloads bypass the dialog after existing access and limit checks; public R2 downloads stream through an attachment endpoint restricted to public R2 hosts, avoiding whole-file browser buffering and leaving Drive unchanged.
 - Global and player context-menu handlers share the same pathname policy evaluated at event time so client-side navigation cannot leave stale right-click restrictions; this UI policy does not grant admin access.
+- MainLayout owns the responsive sidebar offset; the homepage composes the existing hero and category sections so shared navigation and saved homepage content remain consistent.

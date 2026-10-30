@@ -13,8 +13,8 @@ import {
   UserCheck,
   Music,
   Trophy,
-  LayoutGrid,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import luoAncientLogo from "@/assets/luo-ancient-logo.png";
 import { SubscriptionModal } from "@/components/subscription/SubscriptionModal";
 import { GreetingAdvertModal } from "@/components/greetings/GreetingAdvertModal";
@@ -45,7 +45,7 @@ export function Sidebar() {
 
   return (
     <>
-      <aside className="hidden lg:flex flex-col fixed left-0 top-0 h-screen w-56 bg-sidebar border-r border-sidebar-border">
+      <aside aria-label="Desktop sidebar" className="glass hidden lg:flex flex-col fixed left-0 top-0 h-dvh w-56 z-40 border-r border-sidebar-border">
         {/* Logo */}
         <div className="flex items-center gap-2 px-6 py-4 border-b border-sidebar-border">
           <img 
@@ -92,52 +92,48 @@ export function Sidebar() {
               );
             })}
 
-            <button
+            <Button variant="ghost"
               type="button"
               onClick={() => setGreetingOpen(true)}
-              className="nav-link nav-link-inactive w-full"
+              className="nav-link nav-link-inactive w-full justify-start"
             >
               <Megaphone className="w-5 h-5" />
               <span className="text-sm">Greeting</span>
-            </button>
+            </Button>
             
             {/* Admin Panel Link - only visible for admin */}
             {isAdmin && (
-              <button
+              <Button variant="ghost"
                 onClick={() => navigate("/admin")}
-                className={`nav-link w-full ${
+                className={`nav-link w-full justify-start ${
                   location.pathname.startsWith("/admin") ? "nav-link-active" : "nav-link-inactive"
                 }`}
               >
                 <Shield className="w-5 h-5" />
                 <span className="text-sm">Admin Panel</span>
-              </button>
+              </Button>
             )}
           </div>
         </nav>
 
         {/* Subscribe CTA */}
         <div className="p-4 border-t border-sidebar-border">
-          <div className="relative aspect-square rounded-2xl overflow-hidden shadow-[0_12px_35px_rgba(128,0,255,0.35)] flex flex-col justify-between p-4 border border-foreground/10" style={{ backgroundImage: 'linear-gradient(135deg, #ff0000, #ff8000, #ffff00, #00ff00, #00bfff, #8000ff, #ff00ff)' }}>
-            {/* Soft glow accents */}
-            <div className="absolute -top-6 -right-6 w-24 h-24 bg-glass-strong/15 rounded-full blur-2xl pointer-events-none" />
-            <div className="absolute -bottom-5 -left-5 w-20 h-20 bg-warning/25 rounded-full blur-xl pointer-events-none" />
-
+          <div className="flex flex-col gap-4">
             <div className="relative z-10">
-              <h3 className="text-foreground text-xl font-black leading-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]">
+              <h3 className="text-foreground text-xl font-bold leading-tight">
                 Subscribe<br />Now
               </h3>
-              <p className="text-foreground text-xs font-extrabold mt-1.5 leading-snug drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
+              <p className="text-muted-foreground text-xs mt-1.5 leading-snug">
                 Get unlimited access to all content
               </p>
             </div>
 
-            <button
+            <Button
               onClick={() => setSubscriptionOpen(true)}
-              className="relative z-10 block w-full bg-glass-strong text-primary hover:bg-primary text-sm font-black py-2 rounded-xl text-center shadow-lg transition-transform hover:scale-[1.02] active:scale-[0.98]"
+              className="w-full"
             >
               View Plans
-            </button>
+            </Button>
           </div>
         </div>
       </aside>
