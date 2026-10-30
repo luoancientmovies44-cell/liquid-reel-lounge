@@ -24,3 +24,4 @@
 - MainLayout owns the responsive sidebar offset; the homepage composes the existing hero and category sections so shared navigation and saved homepage content remain consistent.
 - Public RTDB catalogue reads share only in-flight requests and category dependencies run in parallel; completed reads are not retained, so admin changes and agent eligibility cannot be hidden by stale application caches.
 - MovieGrid keeps all catalogue positions but mounts card controls near the viewport using one observer per grid, preventing large episode lists from blocking the first visible posters.
+- Public MovieGrid preserves the order supplied by each catalogue page rather than re-sorting titles, so recent, trending and rating lists retain their intended ranking.

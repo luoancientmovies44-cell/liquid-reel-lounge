@@ -1,7 +1,6 @@
 import { MovieCard } from "@/components/movies/MovieCard";
 import type { Movie, Series, ContentItem } from "@/lib/firebase-db";
-import { compareTitles } from "@/lib/title-order";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface MovieGridProps {
@@ -12,7 +11,8 @@ interface MovieGridProps {
 
 export function MovieGrid({ items, contentType, columns }: MovieGridProps) {
   const gridRef = useRef<HTMLDivElement>(null);
-  const ordered = useMemo(() => [...items].sort(compareTitles), [items]);
+  // Keep each page's original catalogue order (recent, trending, or rating).
+  const ordered = items;
   const [visible, setVisible] = useState<Set<number>>(() => new Set());
 
   useEffect(() => {
@@ -42,16 +42,16 @@ export function MovieGrid({ items, contentType, columns }: MovieGridProps) {
   }, [ordered]);
 
   return (
-    <div ref={gridRef} className="library-grid">
+    <div ref={gridRef} className={columns ? `grid ${columns} gap-2 lg:gap-3` : "library-grid"}>
       {ordered.map((item, index) => {
         const type = contentType || (item as ContentItem).type || "movie";
         return (
           <div key={`${type}-${item.id}-${(item as ContentItem).episodeInfo?.episodeId || "title"}`} data-card-index={index} className="min-w-0">
             {visible.has(index) ? <MovieCard movie={item} contentType={type} /> : (
-              <div className="space-y-2">
+              <div>
                 <Skeleton className="aspect-[2/3] rounded-lg" />
-                <Skeleton className="h-4 w-3/4" />
-                <Skeleton className="h-3 w-1/2" />
+                <div className="movie-name"><Skeleton className="h-3 w-3/4" /></div>
+                <div className="movie-meta"><Skeleton className="h-3 w-1/2" /></div>
               </div>
             )}
           </div>
