@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Restore full-width desktop layout with the original sidebar and restore homepage hero slides and original sections in liquid glass; verify desktop and phone navigation.
+- [x] Restore full-width desktop layout with the original sidebar and homepage hero slides plus all six original sections in liquid glass; desktop width, slide selection, sidebar navigation, login and phone overflow checks passed.
 
 - [ ] Apply the supplied light liquid-glass design across library, shared controls, forms and admin while preserving real content and existing subscription rules.
 - [ ] Add centred movie/series selection with Watch and Download, and honest same-page download initiation feedback; verify supported streaming providers and report unsupported Drive permissions.
