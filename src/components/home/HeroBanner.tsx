@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Play, Star, ChevronLeft, ChevronRight } from "lucide-react";
 import { getFeaturedContent, getHeroImages, type ContentItem, type HeroImage } from "@/lib/firebase-db";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const AUTO_SLIDE_INTERVAL = 15000;
@@ -30,10 +30,8 @@ export function HeroBanner() {
   const [slides, setSlides] = useState<SlideItem[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [animState, setAnimState] = useState<"enter" | "exit">("enter");
   const [animIndex, setAnimIndex] = useState(0);
   const [displayIndex, setDisplayIndex] = useState(0);
-  const isTransitioning = useRef(false);
 
   useEffect(() => {
     async function fetchSlides() {
@@ -55,20 +53,11 @@ export function HeroBanner() {
   }, []);
 
   const transitionTo = useCallback((nextIndex: number) => {
-    if (isTransitioning.current || slides.length <= 1) return;
-    isTransitioning.current = true;
-    setAnimState("exit");
-    setTimeout(() => {
-      const nextAnim = (animIndex + 1) % ANIMATIONS.length;
-      setAnimIndex(nextAnim);
-      setDisplayIndex(nextIndex);
-      setCurrentIndex(nextIndex);
-      setAnimState("enter");
-      setTimeout(() => {
-        isTransitioning.current = false;
-      }, 800);
-    }, 500);
-  }, [slides.length, animIndex]);
+    if (slides.length <= 1) return;
+    setAnimIndex((index) => (index + 1) % ANIMATIONS.length);
+    setDisplayIndex(nextIndex);
+    setCurrentIndex(nextIndex);
+  }, [slides.length]);
 
   useEffect(() => {
     if (slides.length <= 1) return;
@@ -91,7 +80,7 @@ export function HeroBanner() {
 
   if (loading) {
     return (
-      <div className="relative w-full h-[250px] lg:h-[380px] overflow-hidden mb-8">
+      <div className="home-hero relative w-full overflow-hidden">
         <Skeleton className="w-full h-full" />
       </div>
     );
@@ -101,12 +90,12 @@ export function HeroBanner() {
 
   const current = slides[displayIndex];
   const anim = ANIMATIONS[animIndex];
-  const animClass = animState === "enter" ? anim.enter : anim.exit;
+  const animClass = anim.enter;
 
   return (
-    <div className="relative w-full h-[250px] lg:h-[380px] overflow-hidden mb-0 group rounded-xl">
+    <div className="home-hero relative w-full overflow-hidden group rounded-lg">
       {/* Background Image */}
-      <div className={`absolute inset-0 rounded-xl overflow-hidden ${animClass}`}>
+      <div key={`image-${displayIndex}`} className={`absolute inset-0 overflow-hidden ${animClass}`}>
         <img
           src={current.kind === "content" ? current.data.posterUrl : current.data.imageUrl}
           alt={current.data.title}
@@ -115,29 +104,31 @@ export function HeroBanner() {
         />
       </div>
 
+      <div className="hero-scrim absolute inset-0 pointer-events-none" />
+
       {/* Navigation Arrows */}
       {slides.length > 1 && (
         <>
-          <button
+          <Button variant="outline" size="icon"
             onClick={goToPrevious}
             className="absolute left-2 lg:left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-background/50 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-background/70 z-10"
             aria-label="Previous slide"
           >
             <ChevronLeft className="w-6 h-6" />
-          </button>
-          <button
+          </Button>
+          <Button variant="outline" size="icon"
             onClick={goToNext}
             className="absolute right-2 lg:right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-background/50 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-background/70 z-10"
             aria-label="Next slide"
           >
             <ChevronRight className="w-6 h-6" />
-          </button>
+          </Button>
         </>
       )}
 
 
       {/* Content overlay */}
-      <div className={`absolute bottom-8 left-0 right-0 ${animClass}`}>
+      <div key={`copy-${displayIndex}`} className={`hero-copy absolute bottom-14 left-0 right-0 pr-12 ${animClass}`}>
         <div className="px-4 lg:px-6 max-w-xl">
           {current.kind === "hero" ? (
             <div>
@@ -146,11 +137,11 @@ export function HeroBanner() {
                   {current.data.badgeText}
                 </span>
               )}
-              <h2 className="text-xl lg:text-3xl font-black mb-1 bg-clip-text text-transparent uppercase tracking-widest italic" style={{ fontFamily: "'Orbitron', sans-serif", fontWeight: 900, backgroundImage: 'linear-gradient(90deg, #ff0000, #ff8000, #ffff00, #00ff00, #00bfff, #8000ff, #ff00ff)', filter: 'drop-shadow(1px 1px 0px rgba(255,255,255,0.5)) drop-shadow(-1px -1px 0px rgba(0,0,0,0.7)) drop-shadow(2px 3px 4px rgba(0,0,0,0.6))', WebkitTextStroke: '0.5px rgba(255,255,255,0.2)' }}>{current.data.title}</h2>
+              <h2 className="text-xl lg:text-3xl font-bold mb-1 hero-copy">{current.data.title}</h2>
               {current.data.subtitle && (
-                <p className="text-sm text-foreground/80 mb-1 drop-shadow-md font-bold">{current.data.subtitle}</p>
+                <p className="text-sm hero-copy mb-1 font-medium">{current.data.subtitle}</p>
               )}
-              <p className="max-w-full text-xs sm:text-sm mb-3 line-clamp-2 font-bold text-foreground drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]">{current.data.description}</p>
+              <p className="max-w-full text-xs sm:text-sm mb-3 line-clamp-2 font-medium hero-copy">{current.data.description}</p>
               {current.data.linkUrl && (
                 <Link to={current.data.linkUrl}>
                   <Button size="sm" className="gradient-primary text-primary-foreground gap-1.5 h-8 px-4 text-xs">
@@ -162,16 +153,16 @@ export function HeroBanner() {
             </div>
           ) : (
             <div>
-              <h2 className="text-xl lg:text-3xl font-black mb-1 bg-clip-text text-transparent uppercase tracking-widest italic" style={{ fontFamily: "'Orbitron', sans-serif", fontWeight: 900, backgroundImage: 'linear-gradient(90deg, #ff0000, #ff8000, #ffff00, #00ff00, #00bfff, #8000ff, #ff00ff)', filter: 'drop-shadow(1px 1px 0px rgba(255,255,255,0.5)) drop-shadow(-1px -1px 0px rgba(0,0,0,0.7)) drop-shadow(2px 3px 4px rgba(0,0,0,0.6))', WebkitTextStroke: '0.5px rgba(255,255,255,0.2)' }}>{current.data.title}</h2>
-              <div className="flex items-center gap-2 text-xs text-foreground/70 mb-2 drop-shadow-md">
+              <h2 className="text-xl lg:text-3xl font-bold mb-1 hero-copy">{current.data.title}</h2>
+              <div className="flex items-center gap-2 text-xs hero-copy mb-2">
                 <div className="flex items-center gap-1">
                   <Star className="w-3 h-3 text-warning fill-warning" />
-                  <span className="text-foreground font-medium">{current.data.rating}</span>
+                  <span className="hero-copy font-medium">{current.data.rating}</span>
                 </div>
                 <span>{current.data.releaseYear}</span>
                 <span>{current.data.genre}</span>
               </div>
-              <p className="max-w-full text-xs sm:text-sm mb-3 line-clamp-1 font-bold text-foreground drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]">{current.data.description}</p>
+              <p className="max-w-full text-xs sm:text-sm mb-3 line-clamp-1 font-medium hero-copy">{current.data.description}</p>
               <Link to={current.data.type === "series" ? `/watch/series/${current.data.id}` : `/watch/${current.data.id}`}>
                 <Button size="sm" className="gradient-primary text-primary-foreground gap-1.5 h-8 px-4 text-xs">
                   <Play className="w-3.5 h-3.5 fill-current" />
@@ -185,13 +176,13 @@ export function HeroBanner() {
 
       {/* Slide Indicators */}
       {slides.length > 1 && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+        <div className="absolute bottom-9 left-1/2 -translate-x-1/2 flex gap-2 z-10">
           {slides.map((_, index) => (
-            <button
+            <Button variant="ghost"
               key={index}
               onClick={() => transitionTo(index)}
-              className={`w-2 h-2 rounded-full transition-all ${
-                index === currentIndex ? "w-6 bg-primary" : "bg-foreground/30 hover:bg-foreground/50"
+              className={`min-w-0 p-0 w-2 h-2 rounded-full transition-all ${
+                index === currentIndex ? "w-6 bg-primary" : "bg-glass-strong hover:bg-primary"
               }`}
               aria-label={`Go to slide ${index + 1}`}
             />
@@ -201,21 +192,11 @@ export function HeroBanner() {
 
       {/* Marquee inside hero (all devices) */}
       <div className="absolute bottom-0 left-0 right-0 overflow-hidden whitespace-nowrap h-6 sm:h-7 lg:h-8 bg-background/40 backdrop-blur-sm z-10 pointer-events-none">
-        <div
-          className="absolute whitespace-nowrap flex gap-[33vw] top-1/2 -translate-y-1/2"
-          style={{
-            animation: "marquee-continuous 35s linear infinite, easter-blink-fade 35s ease-in-out infinite",
-          }}
-        >
+        <div className="hero-marquee absolute whitespace-nowrap flex gap-32 top-1/2 -translate-y-1/2">
           {[0, 1, 2].map((i) => (
             <span
               key={i}
-              className="text-base lg:text-lg font-black uppercase tracking-widest italic bg-clip-text text-transparent inline-block"
-              style={{
-                fontFamily: "'Orbitron', sans-serif",
-                backgroundImage: 'linear-gradient(90deg, #ff0000, #ff8000, #ffff00, #00ff00, #00bfff, #8000ff, #ff00ff)',
-                filter: 'drop-shadow(1px 1px 0px rgba(255,255,255,0.5)) drop-shadow(2px 3px 4px rgba(0,0,0,0.6))',
-              }}
+              className="text-xs lg:text-sm font-semibold text-foreground inline-block"
             >
               🎬 Enjoy the full world of Luo cinema, perfectly translated by Luo Ancient 🎬
             </span>
