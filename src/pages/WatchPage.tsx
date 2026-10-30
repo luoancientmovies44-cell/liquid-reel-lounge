@@ -1,6 +1,7 @@
 import { DirectVideoPlayer } from "@/components/movies/DirectVideoPlayer";
 import { usesDirectVideoPlayer } from "@/lib/upload-policy";
-import { startDirectVideoDownload } from "@/lib/direct-download";
+import { prepareMediaDownload, launchMediaDownload } from "@/lib/media-download";
+import { DownloadProgress, type DownloadState } from "@/components/movies/DownloadProgress";
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import {
@@ -75,6 +76,7 @@ export default function WatchPage() {
   const [relatedContent, setRelatedContent] = useState<(Movie | Series)[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [downloadState, setDownloadState] = useState<DownloadState>(null);
   const [downloadFrame, setDownloadFrame] = useState<{ url: string; title: string; fallbackUrl?: string; fileId?: string } | null>(null);
 
   const [selectedSeason, setSelectedSeason] = useState(1);
@@ -217,121 +219,26 @@ export default function WatchPage() {
       return;
     }
 
-    // Check if this is an agent episode — require Agent Plan
-    const isAgentContent = isSeries && selectedEpisode?.isAgent;
-    if (isAgentContent && !hasAgentPlan) {
-      setShowAgentSubscription(true);
-      return;
-    }
-
-    // Check subscription (admin has free access via hasActiveSubscription)
-    if (!hasActiveSubscription) {
-      setShowSubscriptionModal(true);
-      return;
-    }
-
-    const fileId = getFileIdFromUrl(rawVideoUrl);
-    const fallbackUrl = fileId
-      ? `https://drive.usercontent.google.com/download?id=${fileId}&export=download&confirm=t`
-      : rawVideoUrl ?? "";
-    // Enforce daily download limit per plan (admin/lifetime/agent unlimited)
+    const isAgentContent = isSeries ? selectedEpisode?.isAgent : movie ? isMovieInAgentMode(movie) : false;
+    if (isAgentContent && !hasAgentPlan) { setShowAgentSubscription(true); return; }
+    if (!hasActiveSubscription) { setShowSubscriptionModal(true); return; }
+    const selectedId = seriesId || id;
+    if (!selectedId || (isSeries && !selectedEpisode?.id)) { toast({ title: "Select a video first", variant: "destructive" }); return; }
+    const selection = { kind: isSeries ? "series" as const : "movie" as const, id: selectedId, ...(isSeries ? { episodeId: selectedEpisode?.id } : {}) };
+    if (isDownloading) return;
+    setIsDownloading(true);
+    setDownloadState("preparing");
     try {
-      const planName = subscription?.plan;
-      if (subscription) {
-        const resetKey = buildSubscriptionResetKey(subscription);
-        await resetDownloadCountsForSubscription(user.id, resetKey);
-      }
-      const limit = getDailyLimitForPlan(planName);
-      const consume = await tryConsumeDownload(user.id, planName);
-      if (!consume.allowed) {
-        track(
-          "Download Limit Reached",
-          `Tried to download "${currentContent?.title || "unknown"}" after using ${consume.count}/${limit} on ${planName} plan`,
-        );
-        toast({
-          title: "YOU HAVE REACHED YOUR DOWNLOAD LIMIT FOR TODAY",
-          description: `Your ${planName} plan allows ${limit} downloads per day (resets at midnight). Upgrade your subscription for more daily downloads.`,
-          variant: "destructive",
-        });
-        setShowSubscriptionModal(true);
-        return;
-      }
-      if (limit !== -1) {
-        toast({
-          title: "Download started",
-          description: `Daily downloads used: ${consume.count}/${limit}`,
-        });
-      }
-    } catch (e) {
-      console.error("Download limit check failed", e);
-    }
-
-    try {
-      if (!rawVideoUrl) {
-        toast({
-          title: "Download failed",
-          description: "No video available to download.",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      setIsDownloading(true);
-      const filename = getDownloadFilename();
-
-      if (usesDirectVideoPlayer(rawVideoUrl)) {
-        const extension = new URL(rawVideoUrl).pathname.match(/\.(mp4|m4v|webm|mov|m3u8)$/i)?.[1] || "mp4";
-        startDirectVideoDownload(rawVideoUrl, `${filename}.${extension}`);
-        setIsDownloading(false);
-        return;
-      }
-
-      const contentDownloadId = isSeries
-        ? `${seriesId || "series"}-${selectedEpisode?.id || selectedEpisode?.episodeNumber || "episode"}`
-        : id || "movie";
-      const downloadLink = await createDownloadLink(
-        contentDownloadId,
-        filename,
-        rawVideoUrl,
-        user.id,
-      );
-
-      if (!downloadLink) {
-        toast({
-          title: "Download failed",
-          description: "Invalid video URL.",
-          variant: "destructive",
-        });
-        setIsDownloading(false);
-        return;
-      }
-
-
-      // Desktop: open the in-site download frame; the Drive confirmation page
-      // renders inside it, and clicking "Download anyway" hands off to the
-      // browser's native download manager.
-      setDownloadFrame({
-        url: downloadLink.downloadUrl,
-        title: downloadLink.filename,
-        fallbackUrl,
-        fileId: fileId ?? undefined,
-      });
-
-      toast({
-        title: "Download ready",
-        description: `Follow the download prompt to save ${downloadLink.filename}`,
-      });
-
-      setIsDownloading(false);
+      await prepareMediaDownload(selection);
+      if (subscription) await resetDownloadCountsForSubscription(user.id, buildSubscriptionResetKey(subscription));
+      const result = await tryConsumeDownload(user.id, subscription?.plan);
+      if (!result.allowed) throw new Error("You have reached your download limit for today.");
+      launchMediaDownload(selection, message => { setDownloadState(null); toast({ title: "Download failed", description: message, variant: "destructive" }); });
+      setDownloadState("started");
     } catch (error) {
-      console.error("Download error:", error);
-      toast({
-        title: "Download failed",
-        description: "Please try again.",
-        variant: "destructive",
-      });
-      setIsDownloading(false);
-    }
+      setDownloadState(null);
+      toast({ title: "Download unavailable", description: error instanceof Error ? error.message : "Please try again.", variant: "destructive" });
+    } finally { setIsDownloading(false); }
   };
 
   const handlePrevious = () => {
@@ -863,15 +770,7 @@ export default function WatchPage() {
         agentOnly
       />
 
-      {/* In-site Download Frame */}
-      <DownloadFrameDialog
-        open={!!downloadFrame}
-        url={downloadFrame?.url || ""}
-        title={downloadFrame?.title || ""}
-        fallbackUrl={downloadFrame?.fallbackUrl}
-        fileId={downloadFrame?.fileId}
-        onClose={() => setDownloadFrame(null)}
-      />
+      <DownloadProgress state={downloadState} title={getDownloadFilename()} onClose={() => setDownloadState(null)} />
     </MainLayout>
   );
 }
