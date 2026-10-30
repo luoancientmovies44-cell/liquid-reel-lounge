@@ -237,16 +237,16 @@ export default function AdminUsers() {
       {/* Filter Tabs */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as FilterTab)} className="flex-1 min-w-[280px]">
-          <TabsList className="grid w-full max-w-md grid-cols-3 bg-[#0d1e36]">
+          <TabsList className="grid w-full max-w-md grid-cols-3 bg-glass-strong">
           <TabsTrigger value="all" className="flex items-center gap-2 data-[state=active]:bg-primary">
             <Users className="w-4 h-4" />
             All ({stats.total})
           </TabsTrigger>
-          <TabsTrigger value="active" className="flex items-center gap-2 data-[state=active]:bg-green-600">
+          <TabsTrigger value="active" className="flex items-center gap-2 data-[state=active]:bg-success">
             <UserCheck className="w-4 h-4" />
             Active ({stats.active})
           </TabsTrigger>
-          <TabsTrigger value="free" className="flex items-center gap-2 data-[state=active]:bg-orange-600">
+          <TabsTrigger value="free" className="flex items-center gap-2 data-[state=active]:bg-warning">
             <UserMinus className="w-4 h-4" />
             Free ({stats.free})
           </TabsTrigger>
@@ -268,7 +268,7 @@ export default function AdminUsers() {
           <DropdownMenuTrigger asChild>
             <Button
               disabled={giftLoading}
-              className={`text-white ${giftActive ? "bg-green-600 hover:bg-green-700" : "bg-gradient-to-r from-pink-500 to-purple-600 hover:opacity-90"}`}
+              className={`text-foreground ${giftActive ? "bg-success hover:bg-success" : "bg-gradient-to-r from-primary to-primary hover:opacity-90"}`}
             >
               <Gift className="w-4 h-4 mr-2" />
               {giftLoading ? "Processing..." : giftActive ? "Gift Day: Active" : "Gift Day"}
@@ -281,13 +281,13 @@ export default function AdminUsers() {
               disabled={giftLoading || giftActive}
               className="cursor-pointer"
             >
-              <Gift className="w-4 h-4 mr-2 text-pink-500" />
+              <Gift className="w-4 h-4 mr-2 text-primary" />
               Activate Gift Day
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={handleDeactivateGiftDay}
               disabled={giftLoading || !giftActive}
-              className="cursor-pointer text-red-500 focus:text-red-500"
+              className="cursor-pointer text-destructive focus:text-destructive"
             >
               <UserX className="w-4 h-4 mr-2" />
               Deactivate Gift Day
@@ -338,7 +338,7 @@ export default function AdminUsers() {
                   placeholder="Admin password"
                 />
                 {giftPasswordError && (
-                  <p className="text-sm text-red-500">{giftPasswordError}</p>
+                  <p className="text-sm text-destructive">{giftPasswordError}</p>
                 )}
               </div>
               <div className="flex justify-end gap-2">
@@ -365,7 +365,7 @@ export default function AdminUsers() {
         />
       </div>
 
-      <Card className="bg-[#0d1e36] border-border/50">
+      <Card className="glass border-border/50">
         <CardContent className="p-0">
           <Table>
             <TableHeader>
@@ -406,7 +406,7 @@ export default function AdminUsers() {
                     <TableCell>{user.email}</TableCell>
                     <TableCell>
                       {isSubscriptionActive(user) ? (
-                        <Badge className="bg-green-500">{user.subscription?.plan}</Badge>
+                        <Badge className="bg-success">{user.subscription?.plan}</Badge>
                       ) : (
                         <Badge variant="secondary">Free</Badge>
                       )}
@@ -438,7 +438,7 @@ export default function AdminUsers() {
                             onClick={() => handleDeactivateSubscription(user.id, user.name)} 
                             title="Deactivate subscription"
                           >
-                            <UserX className="w-4 h-4 text-orange-500" />
+                            <UserX className="w-4 h-4 text-warning" />
                           </Button>
                         )}
                         <Button variant="ghost" size="icon" className="text-destructive" onClick={() => handleDeleteUser(user.id)}>
@@ -466,7 +466,7 @@ export default function AdminUsers() {
               <p className="text-sm text-muted-foreground">{selectedUser?.email}</p>
               {selectedUser?.subscription && isSubscriptionActive(selectedUser) && (
                 <div className="mt-2">
-                  <Badge className="bg-green-500">{selectedUser.subscription.plan}</Badge>
+                  <Badge className="bg-success">{selectedUser.subscription.plan}</Badge>
                   <span className="text-xs text-muted-foreground ml-2">
                     Expires: {format(new Date(selectedUser.subscription.expiresAt), "MMM dd, yyyy")}
                   </span>

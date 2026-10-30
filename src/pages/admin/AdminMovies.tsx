@@ -1,3 +1,4 @@
+import { compareTitles } from "@/lib/title-order";
 import { MediaUploadField } from "@/components/admin/MediaUploadField";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -51,7 +52,7 @@ export default function AdminMovies() {
   const loadMovies = async () => {
     setIsLoading(true);
     const data = await getMovies();
-    setMovies(data);
+    setMovies(data.sort(compareTitles));
     setIsLoading(false);
   };
 
@@ -305,7 +306,7 @@ export default function AdminMovies() {
                     checked={formData.isAgent}
                     onCheckedChange={(checked) => setFormData({ ...formData, isAgent: !!checked })}
                   />
-                  <Label htmlFor="isAgent" className="text-orange-500 font-semibold">Agent Movie</Label>
+                  <Label htmlFor="isAgent" className="text-warning font-semibold">Agent Movie</Label>
                 </div>
                 {formData.isAgent && (
                   <div className="flex items-center gap-2">
@@ -388,7 +389,7 @@ export default function AdminMovies() {
                     <TableCell>{movie.releaseYear}</TableCell>
                     <TableCell>
                       {movie.isFeatured ? (
-                        <span className="text-green-500">Yes</span>
+                        <span className="text-success">Yes</span>
                       ) : (
                         <span className="text-muted-foreground">No</span>
                       )}
@@ -396,7 +397,7 @@ export default function AdminMovies() {
                     <TableCell>
                       {movie.isAgent ? (
                         <div className="flex flex-col gap-1">
-                          <span className="text-orange-500 font-semibold">Agent</span>
+                          <span className="text-warning font-semibold">Agent</span>
                           <label className="flex items-center gap-1 text-xs text-muted-foreground">
                             <Switch
                               checked={!!movie.hiddenFromWebAgent}

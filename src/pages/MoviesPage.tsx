@@ -40,7 +40,7 @@ export default function MoviesPage() {
               <Link
                 key={genre}
                 to={`/genres/${genre.toLowerCase()}`}
-                className="text-[10px] sm:text-xs px-2 py-0.5 rounded-full bg-transparent hover:bg-primary/10 text-white font-bold border border-primary/30 transition-colors whitespace-nowrap"
+                className="text-[10px] sm:text-xs px-2 py-0.5 rounded-full bg-transparent hover:bg-primary/10 text-foreground font-bold border border-primary/30 transition-colors whitespace-nowrap"
               >
                 {genre}
               </Link>

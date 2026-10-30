@@ -161,7 +161,7 @@ export default function AdminSms() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Compose */}
-        <Card className="bg-[#0d1e36] border-border/50">
+        <Card className="glass border-border/50">
           <CardContent className="p-6 space-y-4">
             <h2 className="font-semibold text-foreground">Send SMS manually</h2>
             <div>
@@ -185,7 +185,7 @@ export default function AdminSms() {
                 Select all shown
               </label>
             </div>
-            <Button onClick={handleSend} disabled={sending} className="w-full bg-orange-500 hover:bg-orange-600 text-white">
+            <Button onClick={handleSend} disabled={sending} className="w-full bg-warning hover:bg-warning text-foreground">
               {sending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Send className="w-4 h-4 mr-2" />}
               Send to {selected.size} selected
             </Button>
@@ -193,7 +193,7 @@ export default function AdminSms() {
         </Card>
 
         {/* Recipients */}
-        <Card className="bg-[#0d1e36] border-border/50">
+        <Card className="glass border-border/50">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
               <h2 className="font-semibold text-foreground">
@@ -224,9 +224,9 @@ export default function AdminSms() {
                       <div className="flex items-center gap-2">
                         <span className="font-medium text-foreground truncate">{r.name}</span>
                         {r.subscribed ? (
-                          <Badge className="bg-green-600 text-white">{r.plan || "Active"}</Badge>
+                          <Badge className="bg-success text-foreground">{r.plan || "Active"}</Badge>
                         ) : r.everSubscribed ? (
-                          <Badge className="bg-amber-600 text-white">Expired</Badge>
+                          <Badge className="bg-warning text-foreground">Expired</Badge>
                         ) : (
                           <Badge variant="secondary">No sub</Badge>
                         )}
@@ -237,7 +237,7 @@ export default function AdminSms() {
                     </div>
                   </label>
                   <Button size="icon" variant="ghost" onClick={() => removeRecipient(r.userId)}>
-                    <Trash2 className="w-4 h-4 text-red-500" />
+                    <Trash2 className="w-4 h-4 text-destructive" />
                   </Button>
                 </div>
               ))}
@@ -251,7 +251,7 @@ export default function AdminSms() {
       </div>
 
       {/* Sent history */}
-      <Card className="bg-[#0d1e36] border-border/50">
+      <Card className="glass border-border/50">
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
             <h2 className="font-semibold text-foreground">Sent messages ({logs.length})</h2>
@@ -291,13 +291,13 @@ export default function AdminSms() {
                     <td className="py-2 pr-4 capitalize">{l.type}</td>
                     <td className="py-2 pr-4 max-w-md truncate">{l.message}</td>
                     <td className="py-2 pr-4">
-                      <Badge className={l.status === "sent" ? "bg-green-600 text-white" : "bg-red-600 text-white"}>
+                      <Badge className={l.status === "sent" ? "bg-success text-foreground" : "bg-destructive text-foreground"}>
                         {l.status}
                       </Badge>
                     </td>
                     <td className="py-2">
                       <Button size="icon" variant="ghost" onClick={() => handleDeleteLog(l.id)}>
-                        <Trash2 className="w-4 h-4 text-red-500" />
+                        <Trash2 className="w-4 h-4 text-destructive" />
                       </Button>
                     </td>
                   </tr>

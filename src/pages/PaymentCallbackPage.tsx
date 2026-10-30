@@ -272,10 +272,10 @@ export default function PaymentCallbackPage() {
 
           {status === "success" && (
             <div className="space-y-4">
-              <div className="w-20 h-20 rounded-full bg-green-500/20 mx-auto flex items-center justify-center">
-                <CheckCircle className="w-10 h-10 text-green-500" />
+              <div className="w-20 h-20 rounded-full bg-success/20 mx-auto flex items-center justify-center">
+                <CheckCircle className="w-10 h-10 text-success" />
               </div>
-              <h1 className="text-2xl font-bold text-green-500">Payment Successful!</h1>
+              <h1 className="text-2xl font-bold text-success">Payment Successful!</h1>
               <p className="text-muted-foreground">{message}</p>
               {confirmationCode && (
                 <p className="text-sm text-muted-foreground">
@@ -295,10 +295,10 @@ export default function PaymentCallbackPage() {
 
           {status === "pending" && (
             <div className="space-y-4">
-              <div className="w-20 h-20 rounded-full bg-yellow-500/20 mx-auto flex items-center justify-center">
-                <AlertCircle className="w-10 h-10 text-yellow-500" />
+              <div className="w-20 h-20 rounded-full bg-warning/20 mx-auto flex items-center justify-center">
+                <AlertCircle className="w-10 h-10 text-warning" />
               </div>
-              <h1 className="text-2xl font-bold text-yellow-500">Payment Processing</h1>
+              <h1 className="text-2xl font-bold text-warning">Payment Processing</h1>
               <p className="text-muted-foreground">{message}</p>
               <div className="flex flex-col gap-2 mt-6">
                 <Button onClick={() => window.location.reload()} className="w-full">

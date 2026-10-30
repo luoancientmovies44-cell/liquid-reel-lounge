@@ -19,7 +19,7 @@ export function SupportCallBar() {
         <a
           href="https://pub-1be50268c1e84d6eabf85c0b779e7eb2.r2.dev/Luo%20ancient%20movies.apk"
           download
-          className="flex min-w-0 items-center justify-center gap-1 w-full px-1 py-2 rounded-lg font-bold text-white bg-gradient-to-r from-blue-500 to-blue-700 active:scale-[0.97] transition-transform"
+          className="flex min-w-0 items-center justify-center gap-1 w-full px-1 py-2 rounded-lg font-bold text-foreground bg-gradient-to-r from-primary to-primary active:scale-[0.97] transition-transform"
           aria-label="Download the app"
         >
           <Download className="w-3.5 h-3.5 animate-pulse shrink-0" />
@@ -39,7 +39,7 @@ export function SupportCallBar() {
         <button
           type="button"
           onClick={() => setAdvertOpen(true)}
-          className="flex min-w-0 items-center justify-center gap-1 w-full px-1 py-2 rounded-lg font-bold text-xs text-white bg-gradient-to-r from-amber-500 to-orange-500 active:scale-[0.97] transition-transform"
+          className="flex min-w-0 items-center justify-center gap-1 w-full px-1 py-2 rounded-lg font-bold text-xs text-foreground bg-gradient-to-r from-warning to-warning active:scale-[0.97] transition-transform"
           aria-label="Send a greeting"
         >
           <Megaphone className="w-3.5 h-3.5 shrink-0" />

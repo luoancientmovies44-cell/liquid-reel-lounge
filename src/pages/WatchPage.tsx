@@ -455,7 +455,7 @@ export default function WatchPage() {
           {/* Player Column */}
           <div className={`flex-1 ${isSeries ? "lg:pr-0" : ""}`}>
             {/* Video Container - Iframe Player */}
-            <div id="video-player" className="relative bg-black w-full scroll-mt-20 overflow-hidden" style={{ aspectRatio: "16 / 9" }}>
+            <div id="video-player" className="relative bg-foreground w-full scroll-mt-20 overflow-hidden" style={{ aspectRatio: "16 / 9" }}>
               {(() => {
                 const isAgent = movie && isMovieInAgentMode(movie);
                 const isAgentEpisode = isSeries && selectedEpisode?.isAgent;
@@ -474,14 +474,14 @@ export default function WatchPage() {
                           e.currentTarget.src = "/placeholder.svg";
                         }}
                       />
-                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm">
-                        <div className="w-16 h-16 lg:w-20 lg:h-20 rounded-full bg-orange-500/20 flex items-center justify-center mb-4">
-                          <Lock className="w-8 h-8 lg:w-10 lg:h-10 text-orange-500" />
+                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-foreground/60 backdrop-blur-sm">
+                        <div className="w-16 h-16 lg:w-20 lg:h-20 rounded-full bg-warning/20 flex items-center justify-center mb-4">
+                          <Lock className="w-8 h-8 lg:w-10 lg:h-10 text-warning" />
                         </div>
-                        <h3 className="text-white text-lg lg:text-xl font-bold mb-2">
+                        <h3 className="text-foreground text-lg lg:text-xl font-bold mb-2">
                           Agent Plan Required
                         </h3>
-                        <p className="text-white/70 text-sm text-center px-4 mb-4">
+                        <p className="text-foreground/70 text-sm text-center px-4 mb-4">
                           {isAgentEpisode
                             ? "This episode requires an Agent Plan (UGX 10,000) to access."
                             : "This is an Agent movie. Subscribe to Agent Plan (UGX 10,000) to access."}
@@ -502,14 +502,14 @@ export default function WatchPage() {
                           e.currentTarget.src = "/placeholder.svg";
                         }}
                       />
-                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm">
+                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-foreground/60 backdrop-blur-sm">
                         <div className="w-16 h-16 lg:w-20 lg:h-20 rounded-full bg-primary/20 flex items-center justify-center mb-4">
                           <Lock className="w-8 h-8 lg:w-10 lg:h-10 text-primary" />
                         </div>
-                        <h3 className="text-white text-lg lg:text-xl font-bold mb-2">
+                        <h3 className="text-foreground text-lg lg:text-xl font-bold mb-2">
                           Subscription Required
                         </h3>
-                        <p className="text-white/70 text-sm text-center px-4 mb-4">
+                        <p className="text-foreground/70 text-sm text-center px-4 mb-4">
                           Subscribe to watch and download this content
                         </p>
                       </div>
@@ -529,14 +529,14 @@ export default function WatchPage() {
                       title={currentContent.title}
                     />
                     {/* Block Google Drive popout icon — solid overlay with logo */}
-                    <div className="absolute top-0 right-0 h-12 w-16 sm:h-14 sm:w-20 z-20 flex items-center justify-center bg-black pointer-events-auto">
+                    <div className="absolute top-0 right-0 h-12 w-16 sm:h-14 sm:w-20 z-20 flex items-center justify-center bg-foreground pointer-events-auto">
                       <img
                         src="/luo-ancient-logo.png"
                         alt="Luo Ancient"
                         className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover"
                       />
                     </div>
-                    <div className="absolute top-0 left-0 right-16 sm:right-20 h-8 sm:h-10 z-10 bg-black pointer-events-none" />
+                    <div className="absolute top-0 left-0 right-16 sm:right-20 h-8 sm:h-10 z-10 bg-foreground pointer-events-none" />
                   </div>
                 ) : (
                   <>
@@ -550,14 +550,14 @@ export default function WatchPage() {
                     />
                     {/* Play Button Overlay */}
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <button className="w-16 h-16 lg:w-20 lg:h-20 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center hover:bg-white/30 transition-colors">
-                        <Play className="w-8 h-8 lg:w-10 lg:h-10 text-white fill-white ml-1" />
+                      <button className="w-16 h-16 lg:w-20 lg:h-20 rounded-full bg-glass-strong/20 backdrop-blur-sm flex items-center justify-center hover:bg-glass-strong/30 transition-colors">
+                        <Play className="w-8 h-8 lg:w-10 lg:h-10 text-foreground fill-foreground ml-1" />
                       </button>
                     </div>
                     {/* Video Controls */}
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-3 lg:p-4">
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-foreground/90 to-transparent p-3 lg:p-4">
                       {/* Progress Bar */}
-                      <div className="h-1 bg-white/30 rounded-full mb-3 cursor-pointer">
+                      <div className="h-1 bg-glass-strong/30 rounded-full mb-3 cursor-pointer">
                         <div className="h-full w-[1%] bg-primary rounded-full relative">
                           <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-primary rounded-full opacity-0 group-hover:opacity-100" />
                         </div>
@@ -565,13 +565,13 @@ export default function WatchPage() {
                       {/* Controls Row */}
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <button className="text-white hover:text-primary transition-colors">
-                            <Play className="w-5 h-5 fill-white" />
+                          <button className="text-foreground hover:text-primary transition-colors">
+                            <Play className="w-5 h-5 fill-foreground" />
                           </button>
-                          <button className="text-white hover:text-primary transition-colors">
+                          <button className="text-foreground hover:text-primary transition-colors">
                             <Volume2 className="w-5 h-5" />
                           </button>
-                          <span className="text-white text-sm">
+                          <span className="text-foreground text-sm">
                             00:00 /{" "}
                             {isSeries
                               ? `${selectedEpisode?.duration || 0}m`
@@ -579,12 +579,12 @@ export default function WatchPage() {
                           </span>
                         </div>
                         <div className="flex items-center gap-3">
-                          <span className="text-white text-sm hidden sm:block">English</span>
-                          <span className="text-white text-sm hidden sm:block">480P</span>
-                          <button className="text-white hover:text-primary transition-colors">
+                          <span className="text-foreground text-sm hidden sm:block">English</span>
+                          <span className="text-foreground text-sm hidden sm:block">480P</span>
+                          <button className="text-foreground hover:text-primary transition-colors">
                             <Settings className="w-5 h-5" />
                           </button>
-                          <button className="text-white hover:text-primary transition-colors">
+                          <button className="text-foreground hover:text-primary transition-colors">
                             <Maximize className="w-5 h-5" />
                           </button>
                         </div>
@@ -722,7 +722,7 @@ export default function WatchPage() {
                   </h1>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
                     <div className="flex items-center gap-1">
-                      <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                      <Star className="w-4 h-4 text-warning fill-warning" />
                       <span className="text-foreground font-medium">{currentContent.rating}</span>
                     </div>
                     <span>|</span>
@@ -750,7 +750,7 @@ export default function WatchPage() {
                 </div>
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
-                    <Star className="w-8 h-8 text-yellow-500 fill-yellow-500" />
+                    <Star className="w-8 h-8 text-warning fill-warning" />
                     <span className="text-3xl font-bold">{currentContent.rating}</span>
                   </div>
                   <div className="text-sm">

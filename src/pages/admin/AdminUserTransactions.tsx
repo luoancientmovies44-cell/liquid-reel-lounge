@@ -65,7 +65,7 @@ export default function AdminUserTransactions() {
               placeholder="Search transactions..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-9 w-64 bg-[#0d1e36] border-border/50"
+              className="pl-9 w-64 glass border-border/50"
             />
           </div>
           <Button variant="outline" size="sm" onClick={load} disabled={loading}>
@@ -81,7 +81,7 @@ export default function AdminUserTransactions() {
 
       <div className="space-y-2">
         {!loading && filtered.length === 0 && (
-          <Card className="bg-[#0d1e36] border-border/50">
+          <Card className="glass border-border/50">
             <CardContent className="p-8 text-center text-muted-foreground">
               No successful transactions recorded yet.
             </CardContent>
@@ -89,9 +89,9 @@ export default function AdminUserTransactions() {
         )}
 
         {filtered.map((t) => (
-          <Card key={t.id} className="bg-[#0d1e36] border-border/50">
+          <Card key={t.id} className="glass border-border/50">
             <CardContent className="p-4 flex items-start gap-4">
-              <div className="w-9 h-9 rounded-full bg-green-500/20 flex items-center justify-center text-green-500 shrink-0 mt-0.5">
+              <div className="w-9 h-9 rounded-full bg-success/20 flex items-center justify-center text-success shrink-0 mt-0.5">
                 <CheckCircle className="w-4 h-4" />
               </div>
               <div className="flex-1 min-w-0">

@@ -148,9 +148,9 @@ export function HeroBanner() {
               )}
               <h2 className="text-xl lg:text-3xl font-black mb-1 bg-clip-text text-transparent uppercase tracking-widest italic" style={{ fontFamily: "'Orbitron', sans-serif", fontWeight: 900, backgroundImage: 'linear-gradient(90deg, #ff0000, #ff8000, #ffff00, #00ff00, #00bfff, #8000ff, #ff00ff)', filter: 'drop-shadow(1px 1px 0px rgba(255,255,255,0.5)) drop-shadow(-1px -1px 0px rgba(0,0,0,0.7)) drop-shadow(2px 3px 4px rgba(0,0,0,0.6))', WebkitTextStroke: '0.5px rgba(255,255,255,0.2)' }}>{current.data.title}</h2>
               {current.data.subtitle && (
-                <p className="text-sm text-white/80 mb-1 drop-shadow-md font-bold">{current.data.subtitle}</p>
+                <p className="text-sm text-foreground/80 mb-1 drop-shadow-md font-bold">{current.data.subtitle}</p>
               )}
-              <p className="max-w-full text-xs sm:text-sm mb-3 line-clamp-2 font-bold text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]">{current.data.description}</p>
+              <p className="max-w-full text-xs sm:text-sm mb-3 line-clamp-2 font-bold text-foreground drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]">{current.data.description}</p>
               {current.data.linkUrl && (
                 <Link to={current.data.linkUrl}>
                   <Button size="sm" className="gradient-primary text-primary-foreground gap-1.5 h-8 px-4 text-xs">
@@ -163,15 +163,15 @@ export function HeroBanner() {
           ) : (
             <div>
               <h2 className="text-xl lg:text-3xl font-black mb-1 bg-clip-text text-transparent uppercase tracking-widest italic" style={{ fontFamily: "'Orbitron', sans-serif", fontWeight: 900, backgroundImage: 'linear-gradient(90deg, #ff0000, #ff8000, #ffff00, #00ff00, #00bfff, #8000ff, #ff00ff)', filter: 'drop-shadow(1px 1px 0px rgba(255,255,255,0.5)) drop-shadow(-1px -1px 0px rgba(0,0,0,0.7)) drop-shadow(2px 3px 4px rgba(0,0,0,0.6))', WebkitTextStroke: '0.5px rgba(255,255,255,0.2)' }}>{current.data.title}</h2>
-              <div className="flex items-center gap-2 text-xs text-white/70 mb-2 drop-shadow-md">
+              <div className="flex items-center gap-2 text-xs text-foreground/70 mb-2 drop-shadow-md">
                 <div className="flex items-center gap-1">
-                  <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
-                  <span className="text-white font-medium">{current.data.rating}</span>
+                  <Star className="w-3 h-3 text-warning fill-warning" />
+                  <span className="text-foreground font-medium">{current.data.rating}</span>
                 </div>
                 <span>{current.data.releaseYear}</span>
                 <span>{current.data.genre}</span>
               </div>
-              <p className="max-w-full text-xs sm:text-sm mb-3 line-clamp-1 font-bold text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]">{current.data.description}</p>
+              <p className="max-w-full text-xs sm:text-sm mb-3 line-clamp-1 font-bold text-foreground drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]">{current.data.description}</p>
               <Link to={current.data.type === "series" ? `/watch/series/${current.data.id}` : `/watch/${current.data.id}`}>
                 <Button size="sm" className="gradient-primary text-primary-foreground gap-1.5 h-8 px-4 text-xs">
                   <Play className="w-3.5 h-3.5 fill-current" />

@@ -127,7 +127,7 @@ export function WelcomeSplash() {
 
   return (
     <div
-      className={`fixed inset-0 z-[9999] flex items-center justify-center bg-black/95 transition-opacity duration-400 ${
+      className={`fixed inset-0 z-[9999] flex items-center justify-center bg-foreground/95 transition-opacity duration-400 ${
         phase === "gone" ? "opacity-0 pointer-events-none" : "opacity-100"
       }`}
     >

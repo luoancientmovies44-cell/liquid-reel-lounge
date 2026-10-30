@@ -64,7 +64,7 @@ export function DownloadFrameDialog({
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-2 sm:p-4"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-foreground/80 p-2 sm:p-4"
       onClick={onClose}
     >
       <div

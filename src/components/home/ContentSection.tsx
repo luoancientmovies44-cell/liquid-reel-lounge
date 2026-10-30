@@ -55,10 +55,10 @@ export function ContentSection({ title, category = "trending", showGenres = fals
             <span>Genres</span>
             <ChevronDown className="w-5 h-5 lg:w-6 lg:h-6" />
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="max-h-80 overflow-y-auto rounded-2xl border-[#3a1f10]/60 p-2 bg-[linear-gradient(135deg,#1a0f08_0%,#3a1f10_50%,#0a0604_100%)] backdrop-blur-md shadow-xl">
+          <DropdownMenuContent align="start" className="max-h-80 overflow-y-auto rounded-2xl border-border/60 p-2 bg-[linear-gradient(135deg,#1a0f08_0%,#3a1f10_50%,#0a0604_100%)] backdrop-blur-md shadow-xl">
             {GENRES.map((genre) => (
-              <DropdownMenuItem key={genre} asChild className="rounded-xl my-0.5 font-bold text-white focus:bg-white/10 focus:text-white">
-                <Link to={genre === "Luo Champion" ? "/luo-champion" : `/genres/${genre.toLowerCase()}`} className="font-bold text-white hover:text-white">{genre}</Link>
+              <DropdownMenuItem key={genre} asChild className="rounded-xl my-0.5 font-bold text-foreground focus:bg-glass-strong/10 focus:text-foreground">
+                <Link to={genre === "Luo Champion" ? "/luo-champion" : `/genres/${genre.toLowerCase()}`} className="font-bold text-foreground hover:text-foreground">{genre}</Link>
               </DropdownMenuItem>
             ))}
           </DropdownMenuContent>

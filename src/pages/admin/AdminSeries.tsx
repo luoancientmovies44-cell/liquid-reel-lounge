@@ -1,3 +1,4 @@
+import { compareTitles } from "@/lib/title-order";
 import { MediaUploadField } from "@/components/admin/MediaUploadField";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -47,7 +48,7 @@ export default function AdminSeries() {
   const loadSeries = async () => {
     setIsLoading(true);
     const data = await getSeries();
-    setSeries(data);
+    setSeries(data.sort(compareTitles));
     setIsLoading(false);
   };
 
@@ -349,7 +350,7 @@ export default function AdminSeries() {
                     <TableCell>{item.rating}</TableCell>
                     <TableCell>{item.seasonLabel || `S${item.seasons}`}</TableCell>
                     <TableCell>
-                      {item.isFeatured ? <span className="text-green-500">Yes</span> : <span className="text-muted-foreground">No</span>}
+                      {item.isFeatured ? <span className="text-success">Yes</span> : <span className="text-muted-foreground">No</span>}
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
