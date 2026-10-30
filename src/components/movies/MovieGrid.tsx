@@ -1,6 +1,8 @@
 import { MovieCard } from "@/components/movies/MovieCard";
 import type { Movie, Series, ContentItem } from "@/lib/firebase-db";
 import { compareTitles } from "@/lib/title-order";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface MovieGridProps {
   items: (Movie | Series | ContentItem)[];
@@ -9,13 +11,49 @@ interface MovieGridProps {
 }
 
 export function MovieGrid({ items, contentType, columns }: MovieGridProps) {
+  const gridRef = useRef<HTMLDivElement>(null);
+  const ordered = useMemo(() => [...items].sort(compareTitles), [items]);
+  const [visible, setVisible] = useState<Set<number>>(() => new Set());
+
+  useEffect(() => {
+    const grid = gridRef.current;
+    if (!grid) return;
+    if (!("IntersectionObserver" in window)) {
+      setVisible(new Set(ordered.map((_, index) => index)));
+      return;
+    }
+    // Keep every catalogue position, but mount expensive dialogs/access hooks
+    // only as their posters approach the screen.
+    const observer = new IntersectionObserver(entries => {
+      const entered = entries.filter(entry => entry.isIntersecting);
+      if (!entered.length) return;
+      setVisible(previous => {
+        const next = new Set(previous);
+        for (const entry of entered) {
+          const index = Number(entry.target.getAttribute("data-card-index"));
+          next.add(index);
+          observer.unobserve(entry.target);
+        }
+        return next;
+      });
+    }, { rootMargin: "600px" });
+    grid.querySelectorAll("[data-card-index]").forEach(element => observer.observe(element));
+    return () => observer.disconnect();
+  }, [ordered]);
+
   return (
-    <div className="library-grid">
-      {[...items].sort(compareTitles).map((item) => {
+    <div ref={gridRef} className="library-grid">
+      {ordered.map((item, index) => {
         const type = contentType || (item as ContentItem).type || "movie";
         return (
-          <div key={`${type}-${item.id}`} className="min-w-0">
-            <MovieCard movie={item} contentType={type} />
+          <div key={`${type}-${item.id}-${(item as ContentItem).episodeInfo?.episodeId || "title"}`} data-card-index={index} className="min-w-0">
+            {visible.has(index) ? <MovieCard movie={item} contentType={type} /> : (
+              <div className="space-y-2">
+                <Skeleton className="aspect-[2/3] rounded-lg" />
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-3 w-1/2" />
+              </div>
+            )}
           </div>
         );
       })}

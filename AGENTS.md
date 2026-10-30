@@ -23,3 +23,4 @@
 - Global and player context-menu handlers share the same pathname policy evaluated at event time so client-side navigation cannot leave stale right-click restrictions; this UI policy does not grant admin access.
 - MainLayout owns the responsive sidebar offset; the homepage composes the existing hero and category sections so shared navigation and saved homepage content remain consistent.
 - Public RTDB catalogue reads share only in-flight requests and category dependencies run in parallel; completed reads are not retained, so admin changes and agent eligibility cannot be hidden by stale application caches.
+- MovieGrid keeps all catalogue positions but mounts card controls near the viewport using one observer per grid, preventing large episode lists from blocking the first visible posters.
