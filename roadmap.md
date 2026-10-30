@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Reduce duplicate Firebase content reads and unblock hero slides; verify real homepage loading and repeat navigation.
+- [x] Share concurrent Firebase content reads, run category dependencies in parallel, show hero slides independently, and mount posters near the screen; real homepage, lower-section scrolling and movie selection passed, 11 tests passed and build OK. First visible posters measured about 5 seconds; network latency still applies.
 
 - [x] Restore full-width desktop layout with the original sidebar and homepage hero slides plus all six original sections in liquid glass; desktop width, slide selection, sidebar navigation, login and phone overflow checks passed.
 
