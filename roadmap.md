@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Match mobile Agent and all Download App colors to Greeting, stop mobile Agent animation, and place matching numbered movie parts in ascending order; test ordering and verify real catalogue/buttons.
+
 - [x] Restore the original catalogue ordering, responsive poster columns and aligned title/episode rows while preserving liquid glass and deferred card mounting; real catalogue checked at five screen sizes, movie selection passed, five existing tests passed and build OK.
 
 - [x] Share concurrent Firebase content reads, run category dependencies in parallel, show hero slides independently, and mount posters near the screen; real homepage, lower-section scrolling and movie selection passed, 11 tests passed and build OK. First visible posters measured about 5 seconds; network latency still applies.
