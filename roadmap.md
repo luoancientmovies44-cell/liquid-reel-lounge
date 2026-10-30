@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Restore compact original mobile header with inline logo, search, Subscribe and account control; replace mobile download/theme icons and verify layout and actions.
+- [x] Restore compact original mobile header with inline logo, search, Subscribe and account control; mobile height verified at 58px across three widths, desktop unchanged, search and signed-out Subscribe actions passed and build OK.
 
 - [x] Match mobile Agent and all Download App colors to Greeting, stop mobile Agent animation, and place matching numbered movie parts in ascending order; 10 tests passed, real Paradise parts verified first-to-last, Greeting and Agent actions passed, desktop/mobile colors matched and build OK.
 
