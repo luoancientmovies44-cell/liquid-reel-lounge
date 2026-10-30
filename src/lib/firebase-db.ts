@@ -1,11 +1,18 @@
 import { database, legacyDatabase } from "./firebase";
 import { ref, get, update, type Database } from "firebase/database";
+import { createContentReadCache } from "./content-read-cache";
+
+const shareMergedRead = createContentReadCache<Record<string, any>>();
 
 // Read a node from BOTH the new and legacy Firebase RTDB and return a
 // merged map keyed by id. New-database entries win on id collisions.
 // Legacy is kept ONLY so previously-uploaded movies/series/episodes/etc.
 // continue to display while all new writes go to the new project.
-async function readMerged(path: string): Promise<Record<string, any>> {
+function readMerged(path: string): Promise<Record<string, any>> {
+  return shareMergedRead(path, () => fetchMerged(path));
+}
+
+async function fetchMerged(path: string): Promise<Record<string, any>> {
   const dbs: Database[] = [database, legacyDatabase];
   const snaps = await Promise.all(
     dbs.map((d) => get(ref(d, path)).catch(() => null)),
@@ -236,7 +243,7 @@ export async function getSeries(limit?: number): Promise<Series[]> {
   }
 
   for (const s of series) {
-    s.hasAgentEpisode = agentSeriesIds.has(s.id!);
+    s.hasAgentEpisode = s.id ? agentSeriesIds.has(s.id) : false;
   }
 
   return limit ? series.slice(0, limit) : series;
@@ -370,9 +377,12 @@ export async function getPopularContent(limit = 20): Promise<ContentItem[]> {
 
 // Get content by category (mixed movies and series)
 export async function getContentByCategory(category: string, limit?: number): Promise<ContentItem[]> {
-  const [movies, seriesList] = await Promise.all([
+  const [movies, seriesList, allEpisodes, allSeriesData, comedies] = await Promise.all([
     getMoviesByCategory(category, limit),
-    getSeriesByCategory(category, limit)
+    getSeriesByCategory(category, limit),
+    getAllEpisodesFromDb(),
+    getSeries(),
+    category === "trending" ? getComedies() : Promise.resolve([]),
   ]);
   
   let content: ContentItem[] = [
@@ -381,9 +391,7 @@ export async function getContentByCategory(category: string, limit?: number): Pr
   ];
   
   // For all categories, include individual episodes as separate cards with S/E badges
-  const allEpisodes = await getAllEpisodesFromDb();
-  const allSeriesData = await getSeries();
-  const seriesMap = new Map(allSeriesData.map(s => [s.id!, s]));
+  const seriesMap = new Map(allSeriesData.map(s => [s.id, s]));
   
   // Filter episodes relevant to this category
   const relevantEpisodes = allEpisodes.filter(ep => {
@@ -399,7 +407,7 @@ export async function getContentByCategory(category: string, limit?: number): Pr
   // Add each episode as a card using its parent series poster
   for (const ep of relevantEpisodes) {
     const parentSeries = seriesMap.get(ep.seriesId);
-    if (!parentSeries) continue;
+    if (!parentSeries || !ep.id) continue;
     
     // Create a content item based on the parent series but with episode info
     const episodeCard: ContentItem = {
@@ -410,7 +418,7 @@ export async function getContentByCategory(category: string, limit?: number): Pr
         seasonNumber: ep.seasonNumber,
         episodeNumber: ep.episodeNumber,
         episodeTitle: ep.title,
-        episodeId: ep.id!,
+        episodeId: ep.id,
         episodeThumbnailUrl: ep.thumbnailUrl,
         seasonLabel: ep.seasonLabel,
       },
@@ -425,13 +433,12 @@ export async function getContentByCategory(category: string, limit?: number): Pr
       // Keep if it's not a series, or if it has episodeInfo, or if it doesn't have episode cards
       if (c.type !== 'series') return true;
       if (c.episodeInfo) return true;
-      return !seriesWithEpisodes.has(c.id!);
+      return !c.id || !seriesWithEpisodes.has(c.id);
     });
   }
   
   // Include Luo Champion uploads marked as trending
   if (category === "trending") {
-    const comedies = await getComedies();
     for (const c of comedies) {
       if (c.isTrending) content.push(comedyToContentItem(c));
     }
