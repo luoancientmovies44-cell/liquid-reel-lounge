@@ -120,8 +120,7 @@ export function MovieCard({ movie, contentType, forceAgentBorder, agentPageMode 
   };
   const download = async () => {
     if (downloadState || !checkAccess() || !user || !movie.id) return;
-    if (isComedyItem) { watch(); return; }
-    const selection = { kind: isSeries ? "series" as const : "movie" as const, id: movie.id, ...(isSeries ? { episodeId: selectedEpisodeId } : {}) };
+    const selection = { kind: isComedyItem ? "comedy" as const : isSeries ? "series" as const : "movie" as const, id: movie.id, ...(isSeries ? { episodeId: selectedEpisodeId } : {}) };
     setDownloadState("preparing");
     try {
       await prepareMediaDownload(selection);
@@ -195,8 +194,8 @@ export function MovieCard({ movie, contentType, forceAgentBorder, agentPageMode 
       <Dialog open={detailOpen} onOpenChange={setDetailOpen}>
         <DialogContent className="max-w-md p-4">
           <div className="flex gap-4 pr-8">
-            <img src={posterUrl} alt={movie.title} className="movie-poster w-28 shrink-0 self-start" />
-            <DialogTitle className="pt-2 text-lg leading-snug break-words">{movie.title}</DialogTitle>
+            <div className="w-28 shrink-0"><img src={posterUrl} alt={movie.title} className="movie-poster" /></div>
+            <DialogTitle className="min-w-0 pt-2 text-lg leading-snug break-words">{movie.title}</DialogTitle>
           </div>
           <DialogDescription className="sr-only">Watch or download {movie.title}</DialogDescription>
           {isSeries && <div className="space-y-2">

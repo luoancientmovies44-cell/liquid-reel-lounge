@@ -45,7 +45,6 @@ async function resolveAccess(token: string, item: Selection, fetcher: typeof fet
   const agent = item.kind === "series" ? content.isAgent === true : content.isAgent === true && typeof content.agentMarkedAt === "number" && Date.now() - content.agentMarkedAt < 2 * 24 * 60 * 60 * 1000;
   const admin = user.emailVerified === true && user.email === "lightstarrecord@gmail.com";
   if (!hasMediaAccess(subscription, agent, admin)) throw new Error(agent ? "An active Agent Plan is required." : "An active subscription is required.");
-  if (item.kind === "comedy" && !admin && !String(subscription?.plan || "").toLowerCase().startsWith("luofree")) throw new Error("This content requires its LuoFree subscription.");
   const source = typeof content.videoUrl === "string" ? allowedMediaSource(content.videoUrl) : null;
   if (!source) throw new Error("This provider does not support same-page downloads. Ask admin for a Google Drive or public R2 video link.");
   const title = String(content.title || "movie");
@@ -56,7 +55,11 @@ async function fetchMedia(source: string, range: string | null, fetcher: typeof 
   for (let n = 0; n < 6; n++) {
     const headers = new Headers({ "Accept-Encoding": "identity" });
     if (range) headers.set("Range", range);
-    const result = await fetcher(target, { headers, redirect: "manual", signal: AbortSignal.timeout(45000) });
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 45000);
+    let result: Response;
+    try { result = await fetcher(target, { headers, redirect: "manual", signal: controller.signal }); }
+    finally { clearTimeout(timeout); }
     if ([301, 302, 303, 307, 308].includes(result.status)) {
       const location = result.headers.get("location");
       await result.body?.cancel();
@@ -79,6 +82,7 @@ export async function handleMediaDownload(request: Request, fetcher: typeof fetc
       const origin = request.headers.get("origin");
       if (origin && origin !== new URL(request.url).origin) return Response.json({ error: "Not allowed." }, { status: 403 });
     }
+    if (request.headers.get("range") && !/^bytes=\d*-\d*$/.test(request.headers.get("range") || "")) return Response.json({ error: "Invalid byte range." }, { status: 400 });
     const body = preflight ? await request.json() as { idToken?: string } : undefined;
     const raw = request.headers.get("cookie")?.split(";").find(v => v.trim().startsWith(`${cookieName}=`))?.trim().slice(cookieName.length + 1);
     const token = preflight ? body?.idToken : raw ? decodeURIComponent(raw) : undefined;

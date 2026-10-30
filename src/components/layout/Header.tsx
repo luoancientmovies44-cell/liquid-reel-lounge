@@ -95,6 +95,14 @@ export function Header() {
               </div>
             )}
           </form>
+        <nav className="mt-3 flex flex-wrap items-center gap-1" aria-label="Library categories">
+          <Button asChild variant="ghost" size="sm" className="h-7 px-2 text-[11px]"><Link to="/genres">Genres</Link></Button>
+          <Button asChild variant="ghost" size="sm" className="h-7 px-2 text-[11px]"><Link to="/trending">Trending</Link></Button>
+          <Button asChild variant="ghost" size="sm" className="h-7 px-2 text-[11px]"><Link to="/recent">Recent</Link></Button>
+          <Button asChild variant="ghost" size="sm" className="h-7 px-2 text-[11px]"><Link to="/agent">Agent</Link></Button>
+          <Button asChild variant="ghost" size="sm" className="h-7 px-2 text-[11px]"><Link to="/apps">Apps</Link></Button>
+          <Button variant="ghost" size="sm" className="h-7 px-2 text-[11px] text-primary" onClick={() => user ? setSubscriptionOpen(true) : openAuth("login")}>Subscribe</Button>
+        </nav>
       </header>
 
       <SubscriptionModal open={subscriptionOpen} onOpenChange={setSubscriptionOpen} />

@@ -401,7 +401,7 @@ export function SubscriptionModal({ open, onOpenChange, agentOnly }: Subscriptio
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className={`${step === "checkout" ? "max-w-2xl h-[90vh] p-0 overflow-hidden flex flex-col" : "max-w-2xl max-h-[90vh] overflow-y-auto"} md:ring-2 md:${ringClass} rounded-xl max-md:w-[calc(100vw-0.5rem)] max-md:max-w-[calc(100vw-0.5rem)] max-md:border-[3px] max-md:border-transparent max-md:[background:linear-gradient(var(--background),var(--background))_padding-box,conic-gradient(from_0deg,#ff0000,#ff7f00,#ffff00,#00ff00,#00ffff,#0000ff,#8b00ff,#ff0000)_border-box]`}>
+      <DialogContent className={step === "checkout" ? "max-w-2xl h-[90dvh] p-0 overflow-hidden flex flex-col" : "max-w-2xl max-h-[90dvh] overflow-y-auto"}>
         {/* PLAN SELECTION */}
         {step === "plans" && !isAgent && (
           <>
@@ -420,12 +420,12 @@ export function SubscriptionModal({ open, onOpenChange, agentOnly }: Subscriptio
               {plans.map((plan) => {
                 const Icon = plan.icon;
                 return (
-                  <button key={plan.duration} onClick={() => handlePlanSelect(plan)} className="relative flex flex-col items-center p-4 rounded-xl border border-border hover:border-primary/50 transition-all hover:scale-105 max-md:border-[2px] max-md:border-transparent max-md:[background:linear-gradient(var(--background),var(--background))_padding-box,conic-gradient(from_0deg,#ff0000,#ff7f00,#ffff00,#00ff00,#00ffff,#0000ff,#8b00ff,#ff0000)_border-box]">
+                  <Button variant="outline" key={plan.duration} onClick={() => handlePlanSelect(plan)} className="relative h-auto flex-col p-4 whitespace-normal">
                     {plan.popular && <span className="absolute -top-1.5 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-[7px] font-bold px-1.5 py-px rounded-full leading-tight">POPULAR</span>}
                     <Icon className="w-6 h-6 mb-2 text-primary" />
                     <span className="text-xs text-muted-foreground">{plan.duration}</span>
                     <span className="text-lg font-bold mt-1">UGX {plan.priceDisplay}</span>
-                  </button>
+                  </Button>
                 );
               })}
             </div>
