@@ -137,7 +137,7 @@ export function AuthModal({ open, onOpenChange, defaultMode = "login" }: AuthMod
               alt="Luo Ancient" 
               className="w-28 h-28 object-contain mx-auto mb-3"
             />
-            <DialogTitle className="brand-title brand-heading">LUO ANCIENT AGENT</DialogTitle>
+            <DialogTitle className="brand-title brand-heading">LUO ANCIENT MOVIES</DialogTitle>
             <DialogDescription className="mt-2">
               {view === "login" ? "Sign in to browse the library" : view === "signup" ? "Create your account" : "Reset your password"}
             </DialogDescription>
