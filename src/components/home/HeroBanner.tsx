@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Play, Star, ChevronLeft, ChevronRight } from "lucide-react";
 import { getFeaturedContent, getHeroImages, type ContentItem, type HeroImage } from "@/lib/firebase-db";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const AUTO_SLIDE_INTERVAL = 15000;
@@ -30,10 +30,8 @@ export function HeroBanner() {
   const [slides, setSlides] = useState<SlideItem[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [animState, setAnimState] = useState<"enter" | "exit">("enter");
   const [animIndex, setAnimIndex] = useState(0);
   const [displayIndex, setDisplayIndex] = useState(0);
-  const isTransitioning = useRef(false);
 
   useEffect(() => {
     async function fetchSlides() {
@@ -55,20 +53,11 @@ export function HeroBanner() {
   }, []);
 
   const transitionTo = useCallback((nextIndex: number) => {
-    if (isTransitioning.current || slides.length <= 1) return;
-    isTransitioning.current = true;
-    setAnimState("exit");
-    setTimeout(() => {
-      const nextAnim = (animIndex + 1) % ANIMATIONS.length;
-      setAnimIndex(nextAnim);
-      setDisplayIndex(nextIndex);
-      setCurrentIndex(nextIndex);
-      setAnimState("enter");
-      setTimeout(() => {
-        isTransitioning.current = false;
-      }, 800);
-    }, 500);
-  }, [slides.length, animIndex]);
+    if (slides.length <= 1) return;
+    setAnimIndex((index) => (index + 1) % ANIMATIONS.length);
+    setDisplayIndex(nextIndex);
+    setCurrentIndex(nextIndex);
+  }, [slides.length]);
 
   useEffect(() => {
     if (slides.length <= 1) return;
@@ -101,12 +90,12 @@ export function HeroBanner() {
 
   const current = slides[displayIndex];
   const anim = ANIMATIONS[animIndex];
-  const animClass = animState === "enter" ? anim.enter : anim.exit;
+  const animClass = anim.enter;
 
   return (
     <div className="home-hero relative w-full overflow-hidden group rounded-lg">
       {/* Background Image */}
-      <div className={`absolute inset-0 overflow-hidden ${animClass}`}>
+      <div key={`image-${displayIndex}`} className={`absolute inset-0 overflow-hidden ${animClass}`}>
         <img
           src={current.kind === "content" ? current.data.posterUrl : current.data.imageUrl}
           alt={current.data.title}
@@ -139,7 +128,7 @@ export function HeroBanner() {
 
 
       {/* Content overlay */}
-      <div className={`hero-copy absolute bottom-14 left-0 right-0 pr-12 ${animClass}`}>
+      <div key={`copy-${displayIndex}`} className={`hero-copy absolute bottom-14 left-0 right-0 pr-12 ${animClass}`}>
         <div className="px-4 lg:px-6 max-w-xl">
           {current.kind === "hero" ? (
             <div>
