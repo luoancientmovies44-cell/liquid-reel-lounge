@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Download, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const APK_URL = "https://pub-1be50268c1e84d6eabf85c0b779e7eb2.r2.dev/Luo%20ancient%20movies.apk";
 
@@ -20,21 +21,22 @@ export function InstallAppButton() {
 
   return (
     <div className="fixed bottom-20 right-4 z-50 flex items-center gap-2 animate-in slide-in-from-bottom-4 fade-in duration-500 lg:bottom-6">
+      <Button asChild variant="greeting" className="h-auto gap-2 rounded-full px-4 py-3 shadow-lg">
       <a
         href={APK_URL}
         download
-        className="flex items-center gap-2 px-4 py-3 rounded-full bg-primary text-primary-foreground shadow-lg hover:scale-105 transition-transform font-medium text-sm"
       >
         <Download className="w-5 h-5" />
         Download App
       </a>
-      <button
+      </Button>
+      <Button variant="secondary" size="icon"
         onClick={handleDismiss}
-        className="p-2 rounded-full bg-muted text-muted-foreground hover:bg-muted/80 shadow-md"
+        className="rounded-full shadow-md"
         aria-label="Dismiss"
       >
         <X className="w-4 h-4" />
-      </button>
+      </Button>
     </div>
   );
 }
