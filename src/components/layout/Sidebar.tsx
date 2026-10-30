@@ -53,8 +53,8 @@ export function Sidebar() {
             alt="Luo Ancient Movies" 
             className="w-10 h-10 rounded-full object-cover flex-shrink-0"
           />
-          <h1 className="text-base font-bold text-sidebar-foreground leading-tight">
-            Luo Ancient Movies
+          <h1 className="brand-title sidebar-brand-title min-w-0">
+            LUO ANCIENT MOVIES
           </h1>
         </div>
 
